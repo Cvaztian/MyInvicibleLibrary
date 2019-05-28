@@ -37,7 +37,8 @@ void handler::handle_get(http_request message)
 {
     ucout <<  message.to_string() << endl;
     string rep = U("WRITE YOUR OWN GET OPERATION");
-    message.reply(status_codes::OK,rep);
+    message.reply(status_codes::OK,"Holawenas");
+    //std::cout<<rep;
 };
 
 //
@@ -46,8 +47,6 @@ void handler::handle_get(http_request message)
 void handler::handle_post(http_request message)
 {
     ucout <<  message.to_string() << endl;
-
-
      message.reply(status_codes::OK,message.to_string());
     return ;
 };

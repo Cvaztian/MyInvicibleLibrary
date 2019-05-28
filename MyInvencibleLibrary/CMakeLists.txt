@@ -17,7 +17,7 @@ add_executable(restserver
           src/handler.cpp
           )
 
-add_executable(restclient clientmain.cpp)
+add_executable(restclient clientmain.cpp restclient.cpp restclient.h)
 
 set(Casablanca_LIBRARIES "-lboost_system -lcrypto -lssl -lcpprest")
 if(DBMS)

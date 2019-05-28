@@ -1,15 +1,11 @@
-#include <cpprest/http_client.h>
-#include <cpprest/filestream.h>
-#include <iostream>
 #include "restclient.h"
-using namespace utility;                    // Common utilities like string conversions
-using namespace web;                        // Common features like URIs.
-using namespace web::http;                  // Common HTTP functionality
-using namespace web::http::client;          // HTTP client features
-using namespace concurrency::streams;       // Asynchronous streams
 
-int main(int argc, char* argv[])
-{/*
+std::string RestClient::respuesta = "";
+RestClient::RestClient()
+{
+}
+
+int RestClient::Get(){
     auto fileStream = std::make_shared<ostream>();
 
     // Open stream to output file.
@@ -32,6 +28,7 @@ int main(int argc, char* argv[])
         printf("Received response status code:%u\n", response.status_code());
       //  std::cout<<response.body().<<std::endl;
         // Write response body into the file.
+        respuesta = response.extract_string().get();
         return response.body().read_to_end(fileStream->streambuf());
     })
 
@@ -51,10 +48,6 @@ int main(int argc, char* argv[])
         printf("Error exception:%s\n", e.what());
     }
 
-    return 0;*/
-    std::cout<<RestClient::respuesta;
-    RestClient::Get();
-    std::cout<<RestClient::respuesta;
-
     return 0;
+
 }
