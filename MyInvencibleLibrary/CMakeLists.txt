@@ -6,7 +6,7 @@ project(MyInvencibleLibrary)
 set (CMAKE_CXX_STANDARD 11)
 option(DBMS "Dbms" OFF)
 include_directories("${CMAKE_SOURCE_DIR}")
-set (CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/Build)
+set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/Build)
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread")
@@ -17,6 +17,8 @@ add_executable(restserver
           src/handler.cpp
           )
 
+add_executable(restclient clientmain.cpp)
+
 set(Casablanca_LIBRARIES "-lboost_system -lcrypto -lssl -lcpprest")
 if(DBMS)
 	set(NEW_DB_SRC_DIR ${CMAKE_SOURCE_DIR}/dbms/src)
@@ -26,7 +28,8 @@ if(DBMS)
 	set(Dbms_dep_lib "-lpqxx -lpq")
 	target_link_libraries(restserver dbms ${Casablanca_LIBRARIES} ${Dbms_dep_lib})
 else(DBMS)
-	target_link_libraries(restserver ${Casablanca_LIBRARIES})
+        target_link_libraries(restserver ${Casablanca_LIBRARIES})
+        target_link_libraries(restclient ${Casablanca_LIBRARIES})
 endif(DBMS)
 
 
