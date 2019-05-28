@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/malavassi/Escritorio/MyInvicibleLibrary/Huffman.h
+iostream
+-
+string
+-
+queue
+-
+unordered_map
+-
+
+/home/malavassi/Escritorio/MyInvicibleLibrary/main.cpp
+iostream
+-
+Huffman.h
+/home/malavassi/Escritorio/MyInvicibleLibrary/Huffman.h
+
