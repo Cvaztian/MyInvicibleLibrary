@@ -8,3 +8,5 @@ MyInvencibleLibrary/dbms/
 MyInvencibleLibrary/include/
 
 MyInvencibleLibrary/static/
+
+*.user
