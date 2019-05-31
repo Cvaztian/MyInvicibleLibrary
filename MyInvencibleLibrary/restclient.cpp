@@ -6,7 +6,7 @@ RestClient::RestClient()
 {
 }
 
-void RestClient::Get(){
+void RestClient::Get(std::string mensaje){
     auto fileStream = std::make_shared<ostream>();
 
     // Open stream to output file.
@@ -20,7 +20,7 @@ void RestClient::Get(){
         // Build request URI and start the request.
         uri_builder builder(U("/search"));
         builder.append_query(U("q"), U("cpprestsdk github"));
-        return client.request(methods::PUT);
+        return client.request(methods::PUT, "", mensaje);
     })
 
     // Handle response headers arriving.
@@ -67,7 +67,7 @@ void RestClient::Put(std::string mensaje){
         // Build request URI and start the request.
         uri_builder builder(U("/search"));
         builder.append_query(U("q"), U("cpprestsdk github"));
-        return client.request(methods::PUT);
+        return client.request(methods::PUT, "", mensaje);
     })
 
     // Handle response headers arriving.
@@ -115,7 +115,7 @@ void RestClient::Post(std::string mensaje){
         // Build request URI and start the request.
         uri_builder builder(U("/search"));
         builder.append_query(U("q"), U("cpprestsdk github"));
-        return client.request(methods::PUT);
+        return client.request(methods::PUT, "", mensaje);
     })
 
     // Handle response headers arriving.
@@ -161,7 +161,7 @@ void RestClient::Delete(std::string mensaje){
         // Build request URI and start the request.
         uri_builder builder(U("/search"));
         builder.append_query(U("q"), U("cpprestsdk github"));
-        return client.request(methods::PUT);
+        return client.request(methods::PUT, "", mensaje);
     })
 
     // Handle response headers arriving.
