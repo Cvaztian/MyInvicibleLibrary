@@ -20,7 +20,10 @@ class RestClient
 public:
     RestClient();
     static std::string respuesta; /**Atributo encargado de portar la respuesta desde el servidor*/
-    static int Get();
+    static void Get();
+    static void Put(std::string mensaje);
+    static void Post(std::string mensaje);
+    static void Delete(std::string mensaje);
 };
 
 #endif // RESTCLIENT_H

@@ -1,4 +1,5 @@
 #include "../include/handler.h"
+#include <streambuf>
 
 handler::handler()
 {
@@ -70,7 +71,9 @@ void handler::handle_delete(http_request message)
 void handler::handle_put(http_request message)
 {
     ucout <<  message.to_string() << endl;
-     string rep = U("WRITE YOUR OWN PUT OPERATION");
-     message.reply(status_codes::OK,rep);
+    message.extract_string(true).wait();
+    string pet = message.extract_string().get();
+    string rep = U("WRITE YOUR OWN PUT OPERATION");
+    message.reply(status_codes::OK,rep);
     return;
 };
