@@ -10,3 +10,9 @@ MyInvencibleLibrary/include/
 MyInvencibleLibrary/static/
 
 *.user
+
+Doxygen/html/
+
+Doxygen/latex/
+
+MyInvencibleLibrary/json/
