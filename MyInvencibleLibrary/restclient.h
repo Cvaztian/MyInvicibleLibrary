@@ -10,19 +10,45 @@ using namespace web::http;                  // Common HTTP functionality
 using namespace web::http::client;          // HTTP client features
 using namespace concurrency::streams;       // Asynchronous streams
 
-/**
-Clase encargada de manejar las solicitudes al REST server.
-@author elorim
-@date 28/05/2018
+/** @brief Clase encargada de manejas solicitudes al REST.
+ * Esta clase utiliza Casablance para realizar solicitudes al server
+ * y procesarlas, retorna los JSON, no retorna los objetos que incluyen
+ * estos.
+ * @author Elorim
+ * @date 28/05/2018
 */
 class RestClient
 {
 public:
-    RestClient();
+    /** Constructor default, no utilizado. */
+    RestClient(); 
     static std::string respuesta; /**Atributo encargado de portar la respuesta desde el servidor*/
-    static void Get();
+    /**
+      Metodo HTML GET.
+      @param mensaje Mensaje a enviar
+      @author Elorim
+*/
+    static void Get(std::string mensaje);
+    /**
+      Metodo HTML PUT.
+      @param mensaje Mensaje a enviar
+      @author Elorim
+      @returns Respuesta del servidor en la variable respuesta
+*/
     static void Put(std::string mensaje);
+    /**
+      Metodo HTML POST.
+      @param mensaje Mensaje a enviar
+      @author Elorim
+      @returns Respuesta del servidor en la variable respuesta
+*/
     static void Post(std::string mensaje);
+    /**
+      Metodo HTML DELETE.
+      @param mensaje Mensaje a enviar
+      @author Elorim
+      @returns Respuesta del servidor en la variable respuesta
+*/
     static void Delete(std::string mensaje);
 };
 

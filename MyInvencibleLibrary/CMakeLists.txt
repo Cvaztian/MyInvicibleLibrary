@@ -18,6 +18,8 @@ add_executable(restserver
           )
 
 add_executable(restclient clientmain.cpp restclient.cpp restclient.h)
+add_executable(pruebasJson jsonmain.cpp)
+add_subdirectory(json)
 
 set(Casablanca_LIBRARIES "-lboost_system -lcrypto -lssl -lcpprest")
 if(DBMS)
@@ -30,6 +32,7 @@ if(DBMS)
 else(DBMS)
         target_link_libraries(restserver ${Casablanca_LIBRARIES})
         target_link_libraries(restclient ${Casablanca_LIBRARIES})
+        target_link_libraries(pruebasJson ${Casablanca_LIBRARIES} nlohmann_json::nlohmann_json)
 endif(DBMS)
 
 

@@ -57,10 +57,9 @@ void handler::handle_post(http_request message)
 //
 void handler::handle_delete(http_request message)
 {
-     ucout <<  message.to_string() << endl;
-
-        string rep = U("WRITE YOUR OWN DELETE OPERATION");
-      message.reply(status_codes::OK,rep);
+    ucout <<  message.to_string() << endl;
+    string rep = U("WRITE YOUR OWN DELETE OPERATION");
+    message.reply(status_codes::OK,rep);
     return;
 };
 

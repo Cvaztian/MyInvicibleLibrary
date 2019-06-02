@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
 
     return 0;*/
     std::cout<<RestClient::respuesta;
-    RestClient::Get();
+   // RestClient::Get();
     std::cout<<RestClient::respuesta;
 
     return 0;
