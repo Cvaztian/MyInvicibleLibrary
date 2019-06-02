@@ -18,7 +18,7 @@ add_executable(restserver
           )
 
 add_executable(restclient clientmain.cpp restclient.cpp restclient.h)
-add_executable(pruebasJson jsonmain.cpp)
+add_executable(pruebasJson jsonmain.cpp metadata.cpp metadata.h)
 add_subdirectory(json)
 
 set(Casablanca_LIBRARIES "-lboost_system -lcrypto -lssl -lcpprest")

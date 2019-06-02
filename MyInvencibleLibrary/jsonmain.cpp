@@ -42,5 +42,11 @@ int main()
         { "sizes", product.sizes }  // explicit relationship between "sizes" and "sizes"
     };
     cout << j;
+
+    Product nproduct = Product();
+    nproduct.name = j["name"];
+    cout << product.name;
+
+
     return 0;
 }
