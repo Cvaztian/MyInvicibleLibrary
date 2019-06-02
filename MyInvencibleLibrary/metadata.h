@@ -49,6 +49,6 @@ public:
    string year;  /** El año de creacion de la imagen*/
    string imagen;  /** La imagen en binario*/
 
-}
+};
 
 #endif // METADATA_H
