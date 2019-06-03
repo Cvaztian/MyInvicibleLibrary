@@ -1,0 +1,28 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/malavassi/Escritorio/MyInvicibleLibrary/auxiliar.h
+iostream
+-
+fstream
+-
+cstring
+-
+vector
+-
+
+/home/malavassi/Escritorio/MyInvicibleLibrary/main.cpp
+fstream
+-
+iostream
+-
+cstring
+-
+auxiliar.h
+/home/malavassi/Escritorio/MyInvicibleLibrary/auxiliar.h
+
