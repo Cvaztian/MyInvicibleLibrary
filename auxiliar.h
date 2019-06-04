@@ -8,6 +8,7 @@
 #include <fstream>
 #include <cstring>
 #include <vector>
+#include<algorithm>
 using namespace std;
 class auxiliar {
 public:
@@ -27,6 +28,12 @@ public:
             ofstream output;
             int counter = 1;
             string fullChunkName;
+
+            //Variables necesarias para la aleatoriedad del almacenamiento en las carpetas del RAID
+            vector<int> aleatorio = {1,2,3,4};
+            int elemento;
+            int cont = 4;
+
             // Create a buffer to hold each chunk
             char *buffer = new char[chunk_size];
             // Keep reading until end of file
@@ -34,7 +41,8 @@ public:
                 // Build the chunk file name. Usually drive:\\chunkName.ext.N
 
                 // N represents the Nth chunk
-
+                srand(time(NULL)*time(NULL)*time(NULL)*10);
+                elemento = rand() % cont;
                 fullChunkName.clear();
                 fullChunkName.append(chunkName);
                 fullChunkName.append(".");
@@ -43,7 +51,9 @@ public:
                 itoa(counter,intBuf,10);
                 fullChunkName.append(intBuf);
                 // Open new chunk file name for output
-                output.open((string)"../"+"RAID/"+to_string(counter)+(string)"/"+(string)fullChunkName.c_str(),ios::out | ios::trunc | ios::binary);
+                output.open((string)"../"+"RAID/"+to_string(aleatorio[elemento])+(string)"/"+(string)fullChunkName.c_str(),ios::out | ios::trunc | ios::binary);
+                cout << "Elemento aleatorio: " << aleatorio[elemento] << endl;
+                cout << "Chunk number " << counter << " will be saved in"<< (string)"../"+"RAID/"+to_string(aleatorio[elemento])+(string)"/"+(string)fullChunkName.c_str() << endl;
                 // If chunk file opened successfully, read from input and
                 // write to output chunk. Then close.
                 if (output.is_open()) {
@@ -52,6 +62,8 @@ public:
                     output.write(buffer,fileStream.gcount());
                     output.close();
                     counter++;
+                    cont--;
+                    aleatorio.erase(std::find(aleatorio.begin(),aleatorio.end(),aleatorio[elemento]));
                 }
             }
             // Cleanup buffer
