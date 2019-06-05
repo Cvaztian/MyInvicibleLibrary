@@ -32,17 +32,16 @@ public:
             //Variables necesarias para la aleatoriedad del almacenamiento en las carpetas del RAID
             vector<int> aleatorio = {1,2,3,4};
             int elemento;
-            int cont = 4;
+            int trozo = 4;
 
             // Create a buffer to hold each chunk
             char *buffer = new char[chunk_size];
             // Keep reading until end of file
             while (!fileStream.eof()) {
                 // Build the chunk file name. Usually drive:\\chunkName.ext.N
-
                 // N represents the Nth chunk
                 srand(time(NULL)*time(NULL)*time(NULL)*10);
-                elemento = rand() % cont;
+                elemento = rand() % trozo;
                 fullChunkName.clear();
                 fullChunkName.append(chunkName);
                 fullChunkName.append(".");
@@ -51,7 +50,7 @@ public:
                 itoa(counter,intBuf,10);
                 fullChunkName.append(intBuf);
                 // Open new chunk file name for output
-                output.open((string)"../"+"RAID/"+to_string(aleatorio[elemento])+(string)"/"+(string)fullChunkName.c_str(),ios::out | ios::trunc | ios::binary);
+                output.open((string)"../RAID/"+to_string(aleatorio[elemento])+(string)"/"+(string)fullChunkName.c_str(),ios::out | ios::trunc | ios::binary);
                 cout << "Elemento aleatorio: " << aleatorio[elemento] << endl;
                 cout << "Chunk number " << counter << " will be saved in"<< (string)"../"+"RAID/"+to_string(aleatorio[elemento])+(string)"/"+(string)fullChunkName.c_str() << endl;
                 // If chunk file opened successfully, read from input and
@@ -62,7 +61,7 @@ public:
                     output.write(buffer,fileStream.gcount());
                     output.close();
                     counter++;
-                    cont--;
+                    trozo--;
                     aleatorio.erase(std::find(aleatorio.begin(),aleatorio.end(),aleatorio[elemento]));
                 }
             }
@@ -136,17 +135,16 @@ char* itoa(int num, char* str, int base)
 
         // Create our output file
         ofstream outputfile;
-        outputfile.open(fileOutput, ios::out | ios::binary);
+        outputfile.open("../" + (string)fileOutput, ios::out | ios::binary);
 
         // If successful, loop through chunks matching chunkName
         if (outputfile.is_open()) {
             bool filefound = true;
             int counter = 1;
             int fileSize = 0;
-
+            int contador = 1;
+            int trozo = 1;
             while (filefound) {
-                filefound = false;
-
                 // Build the filename
                 fileName.clear();
                 fileName.append(chunkName);
@@ -158,11 +156,12 @@ char* itoa(int num, char* str, int base)
 
                 // Open chunk to read
                 ifstream fileInput;
-                fileInput.open(fileName.c_str(), ios::in | ios::binary);
-
+                fileInput.open("../RAID/"+to_string(contador)+"/"+(string)fileName.c_str(), ios::in | ios::binary);
+                cout << "Estoy intentando abrir: " << "../RAID/"+to_string(contador)+"/"+(string)fileName.c_str() << endl;
                 // If chunk opened successfully, read it and write it to
                 // output file.
                 if (fileInput.is_open()) {
+                    cout << "Abri: " << "../RAID/"+to_string(contador)+"/"+(string)fileName.c_str() << endl;
                     filefound = true;
                     fileSize = getFileSize(&fileInput);
                     char *inputBuffer = new char[fileSize];
@@ -172,10 +171,22 @@ char* itoa(int num, char* str, int base)
                     delete(inputBuffer);
 
                     fileInput.close();
+                    counter++;
+                    if(contador == 4 and trozo == 3){
+                        cout << "Se encontraron todos los trozos" << endl;
+                        break;
+                    }
+                    trozo++;
+                    contador = 1;
+                }else{
+                    filefound = true;
+                    if(contador == 4){
+                        cout << "No es posible recostruir el archivo ya que no se encontro el trozo numero " << trozo << endl;
+                        break;
+                    }
+                    contador++;
                 }
-                counter++;
             }
-
             // Close output file.
             outputfile.close();
 
