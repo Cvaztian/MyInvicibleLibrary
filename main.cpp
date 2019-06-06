@@ -9,8 +9,9 @@ using namespace std;
 int main( int argc, char* argv[] )
 {
 auxiliar a;
-//a.chunkFile("../image.jpg","chunks");
-a.joinFile("chunks","resultado");
+a.chunkFile("../image.jpg","chunks");
+//a.joinFile("chunks","resultado");
 
 }
+
 

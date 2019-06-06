@@ -8,7 +8,7 @@
 #include <fstream>
 #include <cstring>
 #include <vector>
-#include<algorithm>
+#include <algorithm>
 using namespace std;
 class auxiliar {
 public:
@@ -30,6 +30,7 @@ public:
             string fullChunkName;
 
             //Variables necesarias para la aleatoriedad del almacenamiento en las carpetas del RAID
+            vector<char*> particiones;
             vector<int> aleatorio = {1,2,3,4};
             int elemento;
             int trozo = 4;
@@ -57,6 +58,7 @@ public:
                 // write to output chunk. Then close.
                 if (output.is_open()) {
                     fileStream.read(buffer, chunk_size);
+                    particiones.push_back(buffer);
                     // gcount() returns number of bytes read from stream.
                     output.write(buffer,fileStream.gcount());
                     output.close();
@@ -64,12 +66,27 @@ public:
                     trozo--;
                     aleatorio.erase(std::find(aleatorio.begin(),aleatorio.end(),aleatorio[elemento]));
                 }
+
             }
             // Cleanup buffer
             delete(buffer);
             // Close input file stream.
             fileStream.close();
             cout << "Chunking complete! " << counter - 1 << " files created." << endl;
+            char* paridad = new char[chunk_size];
+            for(int i = 0; i <= chunk_size; i++){
+                paridad[i] = XOR(particiones[0][i],particiones[0][i],particiones[0][i]);
+            }
+            ofstream archivo_paridad;
+            archivo_paridad.open((string)"../RAID/"+to_string(aleatorio.front())+(string)"/"+(string)chunkName+".paridad",ios::out | ios::trunc | ios::binary);
+            cout << "Estoy guardando paridad en: " << (string)"../RAID/"+to_string(aleatorio.front())+(string)"/"+(string)chunkName+".paridad" << endl;
+            if(archivo_paridad.is_open()) {
+                archivo_paridad.write(paridad, chunk_size);
+            }else{
+                cout << "No se logro abrir archivo para la paridad" << endl;
+            }
+            archivo_paridad.close();
+            delete(paridad);
         }
         else { cout << "Error opening file!" << endl; }
     }
@@ -196,6 +213,7 @@ char* itoa(int num, char* str, int base)
 
     }
 
+
 // Simply gets the file size of file.
     int getFileSize(ifstream *file) {
         file->seekg(0,ios::end);
@@ -203,6 +221,13 @@ char* itoa(int num, char* str, int base)
         file->seekg(ios::beg);
         return filesize;
     }
+
+    char XOR(char a, char b, char c){
+    char d = a ^ b ^ c;
+    return d;
+    }
+
+
 };
 
 
