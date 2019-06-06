@@ -18,22 +18,16 @@ public:
         fileStream.open(fullFilePath, ios::in | ios::binary);
         // File open a success
         if (fileStream.is_open()) {
-            fileStream.seekg(0, ios::end); // To get file size
-            int tam = static_cast <int> (fileStream.tellg());
-            fileStream.close();
-            fileStream.open(fullFilePath, ios::in | ios::binary);
-            int chunk_size = (tam/3)+1;
-            cout << tam << endl;
-            cout << chunk_size << endl;
-            ofstream output;
-            int counter = 1;
-            string fullChunkName;
-
-            //Variables necesarias para la aleatoriedad del almacenamiento en las carpetas del RAID
+            int chunk_size = (getFileSize(&fileStream)/3)+1;
             vector<char*> particiones;
             vector<int> aleatorio = {1,2,3,4};
             int elemento;
             int trozo = 4;
+            ofstream output;
+            int counter = 1;
+            string fullChunkName;
+            cout << "El tamano del archivo es: " << getFileSize(&fileStream) << endl;
+            cout << "El tamano de cada archivo parte sera: " << chunk_size << endl;
 
             // Create a buffer to hold each chunk
             char *buffer = new char[chunk_size];
@@ -62,9 +56,9 @@ public:
                     // gcount() returns number of bytes read from stream.
                     output.write(buffer,fileStream.gcount());
                     output.close();
+                    aleatorio.erase(std::find(aleatorio.begin(),aleatorio.end(),aleatorio[elemento]));
                     counter++;
                     trozo--;
-                    aleatorio.erase(std::find(aleatorio.begin(),aleatorio.end(),aleatorio[elemento]));
                 }
             }
             // Cleanup buffer
