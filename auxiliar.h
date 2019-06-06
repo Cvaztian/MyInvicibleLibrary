@@ -66,7 +66,6 @@ public:
                     trozo--;
                     aleatorio.erase(std::find(aleatorio.begin(),aleatorio.end(),aleatorio[elemento]));
                 }
-
             }
             // Cleanup buffer
             delete(buffer);
@@ -161,6 +160,7 @@ char* itoa(int num, char* str, int base)
             int fileSize = 0;
             int contador = 1;
             int trozo = 1;
+            vector<int> carpetas_por_encontrar = {1,2,3,4};
             while (filefound) {
                 // Build the filename
                 fileName.clear();
@@ -179,6 +179,7 @@ char* itoa(int num, char* str, int base)
                 // output file.
                 if (fileInput.is_open()) {
                     cout << "Abri: " << "../RAID/"+to_string(contador)+"/"+(string)fileName.c_str() << endl;
+                    carpetas_por_encontrar.erase(std::find(carpetas_por_encontrar.begin(),carpetas_por_encontrar.end(),contador));
                     filefound = true;
                     fileSize = getFileSize(&fileInput);
                     char *inputBuffer = new char[fileSize];
@@ -189,8 +190,17 @@ char* itoa(int num, char* str, int base)
 
                     fileInput.close();
                     counter++;
-                    if(contador == 4 and trozo == 3){
-                        cout << "Se encontraron todos los trozos" << endl;
+                    cout << "El tamano de carpetos_por_encontrar es: " <<carpetas_por_encontrar.size() << endl;
+                    if(trozo == 3){
+                        fileInput.open("../RAID/"+to_string(carpetas_por_encontrar[0])+"/"+(string)chunkName+".paridad", ios::in | ios::binary);
+                        if(fileInput.is_open()) {
+                            cout << "Abri: "<< "../RAID/"+to_string(carpetas_por_encontrar[0])+"/"+(string)chunkName+".paridad" << endl;
+                            cout << "Se encontraron todos los trozos" << endl;
+                            outputfile.close();
+                            fileInput.close();
+                        }else {
+                            cout << "No fue posible encontrar la paridad, el disco caido es el disco numero: "<< carpetas_por_encontrar[0] << endl;
+                        }
                         break;
                     }
                     trozo++;
@@ -198,7 +208,7 @@ char* itoa(int num, char* str, int base)
                 }else{
                     filefound = true;
                     if(contador == 4){
-                        cout << "No es posible recostruir el archivo ya que no se encontro el trozo numero " << trozo << endl;
+                        cout << "No es posible recostruir el archivo ya que no se encontro el trozo numero " << trozo << " debido a la caida del disco: " << carpetas_por_encontrar[0] << endl;
                         break;
                     }
                     contador++;
