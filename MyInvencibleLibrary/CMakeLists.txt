@@ -21,6 +21,8 @@ add_executable(restclient clientmain.cpp restclient.cpp restclient.h)
 add_executable(pruebasJson jsonmain.cpp metadata.cpp metadata.h)
 add_executable(socketclient socketclient.cpp)
 add_executable(socketserver socketserver.cpp serversocket.cpp serversocket.h )
+add_executable(ServerLib libmain.cpp src/handler.cpp
+    servermanager.cpp servermanager.h serversocket.h serversocket.cpp)
 add_subdirectory(json)
 
 set(Casablanca_LIBRARIES "-lboost_system -lcrypto -lssl -lcpprest")
@@ -37,6 +39,7 @@ else(DBMS)
         target_link_libraries(pruebasJson ${Casablanca_LIBRARIES} nlohmann_json::nlohmann_json)
         target_link_libraries(socketclient  nlohmann_json::nlohmann_json)
         target_link_libraries(socketserver  nlohmann_json::nlohmann_json)
+        target_link_libraries(ServerLib nlohmann_json::nlohmann_json ${Casablanca_LIBRARIES})
 endif(DBMS)
 
 
