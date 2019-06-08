@@ -16,7 +16,9 @@ json Metadata::getJson()
        {"size",size},
        {"descripcion",descripcion},
        {"year",year},
-       {"imagen", imagen}
+       {"imagen", imagen},
+       {"mensaje", mensaje},
+       {"protocolo", protocolo}
    };
    return result;
 }
@@ -32,5 +34,7 @@ Metadata Metadata::jsonParse(json jsonToParse)
     newObj.descripcion = jsonToParse["descripcion"];
     newObj.year = jsonToParse["year"];
     newObj.imagen = jsonToParse["imagen"];
+    newObj.protocolo = jsonToParse["protocolo"];
+    newObj.mensaje = jsonToParse["mensaje"];
     return newObj;
 }

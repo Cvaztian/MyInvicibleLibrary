@@ -23,6 +23,7 @@ String JsonValueTypeToString(const JsonValueType& type)
 
 int main()
 {
+    /*
     nlohmann::json j;
     struct Product
     {
@@ -46,7 +47,9 @@ int main()
     Product nproduct = Product();
     nproduct.name = j["name"];
     cout << product.name;
-
+*/
+    cout<<nlohmann::json("ala");
+    cout<<"ala";
 
     return 0;
 }

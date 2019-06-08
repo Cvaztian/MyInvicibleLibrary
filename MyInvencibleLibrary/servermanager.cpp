@@ -30,9 +30,44 @@ void ServerManager::handle_error(pplx::task<void>& t)
 //
 void ServerManager::handle_get(http_request message)
 {
+    ucout << "Operacion get\n";
+
+    // Parsing incoming message
+    string returning;
+    string contenido = message.to_string();
+    nlohmann::json response = nlohmann::json(contenido); // Convierto a json
+    Metadata responseObj = Metadata::jsonParse(response);  // Objeto metadata
+
+    // Consiguiendo metadata
+    responseObj.protocolo = 0; // Protocolo 0 es get
+    sockets->sendS(responseObj.getJson(), "base");  // Pido la metadata a la base de datos
+    response = nlohmann::json(sockets->receiveS("base")); // La recibo
+    responseObj = Metadata::jsonParse(response);
+    if(responseObj.mensaje == "404"){ //Check for exceptions
+        cout << "Not found\n";
+        responseObj.mensaje = "La imagen no fue encontrada";
+        returning = responseObj.getJson();
+        message.reply(status_codes::NotFound,returning);
+        return;
+    }
+
+    // Consiguiendo imagen
+    sockets->sendS(response, "raid");  // Pido imagen
+    response = nlohmann::json(sockets->receiveS("raid")); // La recibo
+    responseObj = Metadata::jsonParse(response);
+    if(responseObj.mensaje == "404"){ // Check for exceptions
+        cout << "Error interno: Hay imagen en base de datos, pero no en disco.\n";
+        responseObj.mensaje = "Error, hay imagen en base de datos pero no en disco.\n";
+        returning = responseObj.getJson();
+        message.reply(status_codes::Conflict, returning);
+        return;
+    }
+
+    // Devolviendo, a este punto response tiene todo lo necesario
     ucout <<  message.to_string() << endl;
     string rep = U("WRITE YOUR OWN GET OPERATION");
-    message.reply(status_codes::OK,"Holawenas");
+    returning = response;
+    message.reply(status_codes::OK,returning);
     //std::cout<<rep;
 };
 

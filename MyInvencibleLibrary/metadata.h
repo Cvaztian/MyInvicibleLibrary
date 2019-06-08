@@ -5,7 +5,7 @@
 
 using namespace std;
 using namespace nlohmann;
-/** @brief Clase encargada de guardar datos de MetadataDB
+/** @brief Clase encargada de guardar datos de MetadataDB y contenedor de mensajes
 Esta clase tiene la finalidad de ser usada como un contenedor para JSON, es de las
 pocas clases que estan habilitadas para convertirse en JSOn y viceversa. Sus
 atributos son publicos para facilitar el parsing utilizando la libreria Json
@@ -29,7 +29,7 @@ public:
       @returns Json que representa los datos de esta clase.
       @author Elorim
 */
-    json getJson();
+    nlohmann::json getJson();
 
     /**
       Este metodo estatico puede llamarse de cualquier lugar y retorna un objeto
@@ -38,7 +38,7 @@ public:
       @returns Objeto Metadata con los datos que tiene el json que se pasa como parametro
       @author Elorim
 */
-    static Metadata jsonParse(json jsonToParse);
+    static Metadata jsonParse(nlohmann::json jsonToParse);
     // Atributos
    string nombre; /** El nombre de la imagen*/
    string galeria;  /** La galeria a la que pertenece la imagen*/
@@ -48,6 +48,12 @@ public:
    string descripcion;  /** La descripcion que se le da a la imagen*/
    string year;  /** El año de creacion de la imagen*/
    string imagen;  /** La imagen en binario*/
+   string mensaje; /** Cualquier mensaje adicional*/
+   /**
+     Protocolo del mensaje. Atributo utilizado en la comunicacion por sockets
+     para distinguir entre diferentes instrucciones.
+*/
+   int protocolo;
 
 };
 
