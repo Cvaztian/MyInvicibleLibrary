@@ -64,8 +64,7 @@ void ServerManager::handle_get(http_request message)
     }
 
     // Devolviendo, a este punto response tiene todo lo necesario
-    ucout <<  message.to_string() << endl;
-    string rep = U("WRITE YOUR OWN GET OPERATION");
+    ucout <<  "Operacion exitosa." << endl;
     returning = response;
     message.reply(status_codes::OK,returning);
     //std::cout<<rep;
@@ -76,8 +75,44 @@ void ServerManager::handle_get(http_request message)
 //
 void ServerManager::handle_post(http_request message)
 {
-    ucout <<  message.to_string() << endl;
-     message.reply(status_codes::OK,message.to_string());
+    ucout << "Operacion post\n";
+
+    // Parsing incoming message
+    string returning;
+    string contenido = message.to_string();
+    nlohmann::json response = nlohmann::json(contenido); // Convierto a json
+    Metadata responseObj = Metadata::jsonParse(response);  // Objeto metadata
+
+    // Sobreescribiendo metadata
+    responseObj.protocolo = 1; // Protocolo 1: Actualizar
+    sockets->sendS(responseObj.getJson(), "base");
+    response = nlohmann::json(sockets->receiveS("base"));
+    responseObj = Metadata::jsonParse(response);
+    if(responseObj.mensaje == "404"){ //Check for exceptions
+        cout << "Not found\n";
+        responseObj.mensaje = "La imagen no fue encontrada";
+        returning = responseObj.getJson();
+        message.reply(status_codes::NotFound,returning);
+        return;
+    }
+
+    if(responseObj.imagen != ""){  // Si el usuario quiere sobreescribir imagen...
+        // Sobreescribe imagen
+        sockets->sendS(response, "raid");
+        response = nlohmann::json(sockets->receiveS("base"));
+        responseObj = Metadata::jsonParse(response);
+        if(responseObj.mensaje == "404"){ // Check for exceptions
+        cout << "Error interno: Hay imagen en base de datos, pero no en disco.\n";
+        responseObj.mensaje = "Error, hay imagen en base de datos pero no en disco.\n";
+        returning = responseObj.getJson();
+        message.reply(status_codes::Conflict, returning);
+        return;
+    }
+    }
+    responseObj.mensaje = "Succesful";
+    returning = responseObj.getJson();
+    ucout <<  "Actualizacion exitosa." << endl;
+    message.reply(status_codes::OK,returning);
     return ;
 };
 
