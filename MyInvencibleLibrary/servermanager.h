@@ -44,7 +44,9 @@ public:
 
 private:
     ServerSocket* sockets;  /** Puntero a la clase que maneja sockets*/
-
+    /** @brief Inicia un socket hacia get.
+     * Para asegurarse que diferentes
+*/
     // Metodos HTTP
     /** @brief Retorna una imagen al cliente que la solicita.
      * Funcion de respuesta por html, responde ante una solicitud de get, devuelve
