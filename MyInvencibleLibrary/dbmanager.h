@@ -14,6 +14,7 @@
 #include "nlohmann/json.hpp"
 #include <sys/types.h>
 #include <sys/stat.h>
+#include "metadata.h"
 
 
 using namespace nlohmann;
@@ -34,6 +35,8 @@ class DBManager
 public:
     /** @brief Constructor estandar*/
     DBManager();
+    /** @brief Destructor estandar.*/
+    ~DBManager();
     /** @brief Devuelve la metadata necesaria
      * Este metodo es el analogo a un select de SQL, dados un nombre y una
      * galeria se encarga de devolver la metada en formato json asociados

@@ -14,6 +14,7 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread")
 add_subdirectory(json)
 add_executable(FIOpruebas fiomain.cpp
     dbmanager.cpp dbmanager.h
+    metadata.h metadata.cpp
     )
 
 set(Casablanca_LIBRARIES "-lboost_system -lcrypto -lssl -lcpprest")

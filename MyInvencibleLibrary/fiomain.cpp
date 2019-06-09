@@ -12,16 +12,19 @@
 #include "nlohmann/json.hpp"
 #include <sys/types.h>
 #include <sys/stat.h>
+#include "dbmanager.h"
 
 using namespace std;
 
 int main () {
+    /*
     // Creating a directory
         if (mkdir("a", 0777) == -1)
             cerr << "Error :  " << strerror(errno) << endl;  // Si ya existe
         else
             cout << "Directory created";  // Si no existe
 
+        // Verificando directorio
         struct stat info;
         char* pathname = "a";
         if( stat( pathname, &info ) != 0 )
@@ -40,7 +43,7 @@ int main () {
         nlohmann::json j;
         j = {{"id",1},{"Imagen","123"}};  // Al escribir las cosas en json no hay espacios.
         ofstream myfile;
-        myfile.open ("a/example.txt");  // Se puede especificar una carpeta, si existe, crea el archivo dentro, si no, no hace nada.
+        myfile.open ("./example.json");  // Se puede especificar una carpeta, si existe, crea el archivo dentro, si no, no hace nada.
         myfile << j;  // Esto crea un nuevo archivo y reescribe todo lo que hay en el
         myfile.close();
 
@@ -67,7 +70,9 @@ int main () {
            printf("Deleted successfully"); // Existe
         else
            printf("Unable to delete the file");  // No existe
-
+           */
+    DBManager* manager = new DBManager();
+    delete manager;
 
   return 0;
 }
