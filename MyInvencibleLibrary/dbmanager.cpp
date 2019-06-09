@@ -43,7 +43,7 @@ json DBManager::Select(string galeria, string nombre)
         infile >> data;
         response = json::parse(data);
         infile.close();
-        return response;
+         return response;
     }else{  // Si no existe alguno
         return "404";
     }
@@ -53,11 +53,14 @@ string DBManager::Update(json metadata)
 {
     Metadata metadataObj = Metadata::jsonParse(metadata);
     if(checkGalery(metadataObj.galeria) && checkFile(metadataObj.nombre,metadataObj.galeria)){ // Check existence
+        json old = Select(metadataObj.galeria, metadataObj.nombre);
+        Metadata MetadataOld = Metadata::jsonParse(old);
+        metadataObj.id = MetadataOld.id;  // El id no se puede sobreescribir
         string spath = metadataObj.galeria + "/" + metadataObj.nombre+".json";
         const char* path = spath.c_str();
         ofstream myfile;
         myfile.open (path);  // Se puede especificar una carpeta, si existe, crea el archivo dentro, si no, no hace nada.
-        myfile << metadata;  // Esto crea un nuevo archivo y reescribe todo lo que hay en el
+        myfile << metadataObj.getJson();  // Esto crea un nuevo archivo y reescribe todo lo que hay en el
         myfile.close();
         return "Success";
     }else{
@@ -80,7 +83,8 @@ string DBManager::Insert(json metadata)
         DBManager::id++;
         metadataObj.id = nid;  // Asigna el id
         ofstream myfile;
-        myfile.open ("./example.json");  // Se puede especificar una carpeta, si existe, crea el archivo dentro, si no, no hace nada.
+        string spath = metadataObj.galeria + "/" + metadataObj.nombre+".json";
+        myfile.open (spath.c_str());  // Se puede especificar una carpeta, si existe, crea el archivo dentro, si no, no hace nada.
         myfile << metadataObj.getJson();  // Esto crea un nuevo archivo y reescribe todo lo que hay en el
         myfile.close();
         return "Success";
@@ -131,7 +135,7 @@ bool DBManager::checkGalery(string galeria)
 
 bool DBManager::checkFile(string nombre, string galeria)
 {
-    string spath = galeria + "/" + nombre;
+    string spath = galeria + "/" + nombre + ".json";
     const char* path = spath.c_str();
     ifstream f(path);
     return f.good();

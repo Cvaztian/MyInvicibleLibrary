@@ -72,6 +72,20 @@ int main () {
            printf("Unable to delete the file");  // No existe
            */
     DBManager* manager = new DBManager();
+    json j = {
+        {"nombre","ala"},
+        {"galeria","misrecuerdos"},
+        {"autor","Kevin"},
+        {"descripcion","Quesuenno!!"},
+        {"year","2019"},
+        {"id",-1},
+        {"size",-1},
+        {"imagen",""},
+        {"mensaje",""},
+        {"protocolo",-1}
+    };
+   // cout << manager->Insert(j);
+    cout << manager->Delete("misrecuerdos","ala");
     delete manager;
 
   return 0;
