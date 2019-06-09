@@ -59,7 +59,7 @@ void ServerManager::handle_get(http_request message)
         cout << "Error interno: Hay imagen en base de datos, pero no en disco.\n";
         responseObj.mensaje = "Error, hay imagen en base de datos pero no en disco.\n";
         returning = responseObj.getJson();
-        message.reply(status_codes::Conflict, returning);
+        message.reply(status_codes::InternalError, returning);
         return;
     }
 
@@ -105,7 +105,7 @@ void ServerManager::handle_post(http_request message)
         cout << "Error interno: Hay imagen en base de datos, pero no en disco.\n";
         responseObj.mensaje = "Error, hay imagen en base de datos pero no en disco.\n";
         returning = responseObj.getJson();
-        message.reply(status_codes::Conflict, returning);
+        message.reply(status_codes::InternalError, returning);
         return;
     }
     }
@@ -150,7 +150,7 @@ void ServerManager::handle_delete(http_request message)
         cout << "Error interno: Hay imagen en base de datos, pero no en disco.\n";
         responseObj.mensaje = "Error, hay imagen en base de datos pero no en disco.\n";
         returning = responseObj.getJson();
-        message.reply(status_codes::Conflict, returning);
+        message.reply(status_codes::InternalError, returning);
         return;
     }
 
@@ -167,10 +167,43 @@ void ServerManager::handle_delete(http_request message)
 //
 void ServerManager::handle_put(http_request message)
 {
-    ucout <<  message.to_string() << endl;
-    message.extract_string(true).wait();
-    string pet = message.extract_string().get();
-    string rep = U("WRITE YOUR OWN PUT OPERATION");
-    message.reply(status_codes::OK,rep);
-    return;
+    ucout << "Operacion put\n";
+
+    // Parsing incoming message
+    string returning;
+    string contenido = message.to_string();
+    nlohmann::json response = nlohmann::json(contenido); // Convierto a json
+    Metadata responseObj = Metadata::jsonParse(response);  // Objeto metadata
+
+    // Escribe metadata
+    responseObj.protocolo = 3; // Protocolo 3: Crear
+    sockets->sendS(responseObj.getJson(), "base");
+    response = nlohmann::json(sockets->receiveS("base"));
+    responseObj = Metadata::jsonParse(response);
+    if(responseObj.mensaje == "406"){ //Check for exceptions
+        cout << "Already in database\n";
+        responseObj.mensaje = "La imagen ya existe";
+        returning = responseObj.getJson();
+        message.reply(status_codes::NotAcceptable,returning);
+        return;
+    }
+
+        // Escribe imagen
+        sockets->sendS(response, "raid");
+        response = nlohmann::json(sockets->receiveS("base"));
+        responseObj = Metadata::jsonParse(response);
+        if(responseObj.mensaje == "406"){ // Check for exceptions
+        cout << "Error interno: Hay imagen en disco, pero no en base de datos.\n";
+        responseObj.mensaje = "Error, hay imagen en disco pero no en base de datos.\n";
+        returning = responseObj.getJson();
+        message.reply(status_codes::InternalError, returning);
+        return;
+
+    }
+    responseObj.mensaje = "Succesful";
+    returning = responseObj.getJson();
+    ucout <<  "Creacion exitosa." << endl;
+    message.reply(status_codes::OK,returning);
+    return ;
+
 }
