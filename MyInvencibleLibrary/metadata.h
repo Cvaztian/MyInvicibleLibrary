@@ -52,6 +52,10 @@ public:
    /**
      Protocolo del mensaje. Atributo utilizado en la comunicacion por sockets
      para distinguir entre diferentes instrucciones.
+     0: Get.
+     1: Actualizar.
+     2: Eliminar.
+     3: Crear;
 */
    int protocolo;
 
