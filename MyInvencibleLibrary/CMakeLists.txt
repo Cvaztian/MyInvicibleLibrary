@@ -19,7 +19,8 @@ add_executable(restserver
 
 add_executable(restclient clientmain.cpp restclient.cpp restclient.h)
 add_executable(pruebasJson jsonmain.cpp metadata.cpp metadata.h)
-add_executable(socketclient socketclient.cpp)
+add_executable(socketclient socketclient.cpp clientsocket.cpp clientsocket.h clientmanager.cpp
+    clientmanager.h)
 add_executable(socketserver socketserver.cpp serversocket.cpp serversocket.h )
 add_executable(ServerLib libmain.cpp src/handler.cpp
     servermanager.cpp servermanager.h serversocket.h serversocket.cpp

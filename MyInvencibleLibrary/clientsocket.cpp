@@ -1,23 +1,15 @@
+#include "clientsocket.h"
 
-// Client side C/C++ program to demonstrate Socket programming
-#include <stdio.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <string.h>
-#include <iostream>
-#define PORT 8080
-
-int main(int argc, char const *argv[])
+ClientSocket::ClientSocket(string tipo)
 {
-    int sock = 0, valread;
+    if(tipo == "base" || tipo == "raid"){
+        this->tipo=tipo;
+        // Inicializando la conexion con server
+    sock = 0;
     struct sockaddr_in serv_addr;
-    char *hello = "";
-    char buffer[1024] = {0};
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
         printf("\n Socket creation error \n");
-        return -1;
     }
 
     serv_addr.sin_family = AF_INET;
@@ -27,20 +19,28 @@ int main(int argc, char const *argv[])
     if(inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr)<=0)
     {
         printf("\nInvalid address/ Address not supported \n");
-        return -1;
     }
 
     if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
     {
         printf("\nConnection Failed \n");
-        return -1;
     }
+    receiveS();
+    sendS(tipo);
 
+    }else{
+        cout<<"Error de tipo";
+    }
+}
 
+void ClientSocket::sendS(string mensaje)
+{
+    send(sock, mensaje.c_str(), strlen(mensaje.c_str()), 0);
+}
 
-    send(sock , "raid" , strlen("raid") , 0 );
-    printf("Hello message sent\n");
-    valread = read( sock , buffer, 1024);
-    printf("%s\n",buffer );
-    return 0;
+string ClientSocket::receiveS()
+{
+    char* buffer = "";
+    read(sock, buffer, 1024);
+    return buffer;
 }
