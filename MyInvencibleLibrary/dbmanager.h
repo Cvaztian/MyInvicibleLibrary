@@ -84,7 +84,7 @@ public:
 */
     string Delete(string galeria, string nombre);
 private:
-    static int id;
+    static int id; /** Contador estatico del id de los archivos*/
 
     /** @brief Verifica si existe galeria.
      * Version auxiliar que verifica la existencia de una galeria
