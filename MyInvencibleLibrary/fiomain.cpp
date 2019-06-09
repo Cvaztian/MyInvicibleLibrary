@@ -10,6 +10,8 @@
 #include <fstream>
 #include <string>
 #include "nlohmann/json.hpp"
+#include <sys/types.h>
+#include <sys/stat.h>
 
 using namespace std;
 
@@ -19,6 +21,15 @@ int main () {
             cerr << "Error :  " << strerror(errno) << endl;  // Si ya existe
         else
             cout << "Directory created";  // Si no existe
+
+        struct stat info;
+        char* pathname = "a";
+        if( stat( pathname, &info ) != 0 )
+            printf( "cannot access %s\n", pathname );
+        else if( info.st_mode & S_IFDIR )  // S_ISDIR() doesn't exist on my windows
+            printf( "%s is a directory\n", pathname );
+        else
+            printf( "%s is no directory\n", pathname );
 
         // Verificando si archivo existe
         ifstream f("a/example.txt");

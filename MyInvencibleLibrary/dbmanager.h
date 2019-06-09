@@ -2,6 +2,19 @@
 #define DBMANAGER_H
 #include <string>
 #include "nlohmann/json.hpp"
+#include <iostream>
+#include <fstream>
+#include <bits/stdc++.h>
+#include <iostream>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <stdio.h>
+#include <iostream>
+#include <fstream>
+#include "nlohmann/json.hpp"
+#include <sys/types.h>
+#include <sys/stat.h>
+
 
 using namespace nlohmann;
 using namespace std;
@@ -69,6 +82,22 @@ public:
     string Delete(string galeria, string nombre);
 private:
     static int id;
+
+    /** @brief Verifica si existe galeria.
+     * Version auxiliar que verifica la existencia de una galeria
+     * @param galeria Nombre de la galeria
+     * @returns Si existe la libreria o no.
+*/
+    bool checkGalery(string galeria);
+
+    /** @brief Verifica si existe el archivo
+     * Dadas un nombre de archivo y una galeria, verifica si existe
+     * el archivo.
+     * @param nombre Nombre del archivo
+     * @param galeria Nombre de la galeria
+     * @returns Si existe el archivo en la galeria o no.
+*/
+    bool checkFile(string nombre, string galeria);
 };
 
 #endif // DBMANAGER_H
