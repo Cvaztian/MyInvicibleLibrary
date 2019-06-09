@@ -35,13 +35,13 @@ void ServerManager::handle_get(http_request message)
     // Parsing incoming message
     string returning;
     string contenido = message.to_string();
-    nlohmann::json response = nlohmann::json(contenido); // Convierto a json
+    nlohmann::json response = nlohmann::json::parse(contenido); // Convierto a json
     Metadata responseObj = Metadata::jsonParse(response);  // Objeto metadata
 
     // Consiguiendo metadata
     responseObj.protocolo = 0; // Protocolo 0 es get
     sockets->sendS(responseObj.getJson(), "base");  // Pido la metadata a la base de datos
-    response = nlohmann::json(sockets->receiveS("base")); // La recibo
+    response = nlohmann::json::parse(sockets->receiveS("base")); // La recibo
     responseObj = Metadata::jsonParse(response);
     if(responseObj.mensaje == "404"){ //Check for exceptions
         cout << "Not found\n";
@@ -53,7 +53,7 @@ void ServerManager::handle_get(http_request message)
 
     // Consiguiendo imagen
     sockets->sendS(response, "raid");  // Pido imagen
-    response = nlohmann::json(sockets->receiveS("raid")); // La recibo
+    response = nlohmann::json::parse(sockets->receiveS("raid")); // La recibo
     responseObj = Metadata::jsonParse(response);
     if(responseObj.mensaje == "404"){ // Check for exceptions
         cout << "Error interno: Hay imagen en base de datos, pero no en disco.\n";
@@ -80,13 +80,13 @@ void ServerManager::handle_post(http_request message)
     // Parsing incoming message
     string returning;
     string contenido = message.to_string();
-    nlohmann::json response = nlohmann::json(contenido); // Convierto a json
+    nlohmann::json response = nlohmann::json::parse(contenido); // Convierto a json
     Metadata responseObj = Metadata::jsonParse(response);  // Objeto metadata
 
     // Sobreescribiendo metadata
     responseObj.protocolo = 1; // Protocolo 1: Actualizar
     sockets->sendS(responseObj.getJson(), "base");
-    response = nlohmann::json(sockets->receiveS("base"));
+    response = nlohmann::json::parse(sockets->receiveS("base"));
     responseObj = Metadata::jsonParse(response);
     if(responseObj.mensaje == "404"){ //Check for exceptions
         cout << "Not found\n";
@@ -99,7 +99,7 @@ void ServerManager::handle_post(http_request message)
     if(responseObj.imagen != ""){  // Si el usuario quiere sobreescribir imagen...
         // Sobreescribe imagen
         sockets->sendS(response, "raid");
-        response = nlohmann::json(sockets->receiveS("base"));
+        response = nlohmann::json::parse(sockets->receiveS("base"));
         responseObj = Metadata::jsonParse(response);
         if(responseObj.mensaje == "404"){ // Check for exceptions
         cout << "Error interno: Hay imagen en base de datos, pero no en disco.\n";
@@ -126,13 +126,13 @@ void ServerManager::handle_delete(http_request message)
     // Parsing incoming message
     string returning;
     string contenido = message.to_string();
-    nlohmann::json response = nlohmann::json(contenido); // Convierto a json
+    nlohmann::json response = nlohmann::json::parse(contenido); // Convierto a json
     Metadata responseObj = Metadata::jsonParse(response);  // Objeto metadata
 
     // Elimina metadata
     responseObj.protocolo = 2; // Protocolo 2: Eliminar
     sockets->sendS(responseObj.getJson(), "base");
-    response = nlohmann::json(sockets->receiveS("base"));
+    response = nlohmann::json::parse(sockets->receiveS("base"));
     responseObj = Metadata::jsonParse(response);
     if(responseObj.mensaje == "404"){ //Check for exceptions
         cout << "Not found\n";
@@ -144,7 +144,7 @@ void ServerManager::handle_delete(http_request message)
 
         // Elimina imagen
         sockets->sendS(response, "raid");
-        response = nlohmann::json(sockets->receiveS("base"));
+        response = nlohmann::json::parse(sockets->receiveS("base"));
         responseObj = Metadata::jsonParse(response);
         if(responseObj.mensaje == "404"){ // Check for exceptions
         cout << "Error interno: Hay imagen en base de datos, pero no en disco.\n";
@@ -172,13 +172,13 @@ void ServerManager::handle_put(http_request message)
     // Parsing incoming message
     string returning;
     string contenido = message.to_string();
-    nlohmann::json response = nlohmann::json(contenido); // Convierto a json
+    nlohmann::json response = nlohmann::json::parse(contenido); // Convierto a json
     Metadata responseObj = Metadata::jsonParse(response);  // Objeto metadata
 
     // Escribe metadata
     responseObj.protocolo = 3; // Protocolo 3: Crear
     sockets->sendS(responseObj.getJson(), "base");
-    response = nlohmann::json(sockets->receiveS("base"));
+    response = nlohmann::json::parse(sockets->receiveS("base"));
     responseObj = Metadata::jsonParse(response);
     if(responseObj.mensaje == "406"){ //Check for exceptions
         cout << "Already in database\n";
@@ -190,7 +190,7 @@ void ServerManager::handle_put(http_request message)
 
         // Escribe imagen
         sockets->sendS(response, "raid");
-        response = nlohmann::json(sockets->receiveS("base"));
+        response = nlohmann::json::parse(sockets->receiveS("base"));
         responseObj = Metadata::jsonParse(response);
         if(responseObj.mensaje == "406"){ // Check for exceptions
         cout << "Error interno: Hay imagen en disco, pero no en base de datos.\n";
