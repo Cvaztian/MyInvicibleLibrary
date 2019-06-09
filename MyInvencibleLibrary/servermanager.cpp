@@ -121,10 +121,44 @@ void ServerManager::handle_post(http_request message)
 //
 void ServerManager::handle_delete(http_request message)
 {
-    ucout <<  message.to_string() << endl;
-    string rep = U("WRITE YOUR OWN DELETE OPERATION");
-    message.reply(status_codes::OK,rep);
-    return;
+    ucout<<"Operacion delete\n";
+
+    // Parsing incoming message
+    string returning;
+    string contenido = message.to_string();
+    nlohmann::json response = nlohmann::json(contenido); // Convierto a json
+    Metadata responseObj = Metadata::jsonParse(response);  // Objeto metadata
+
+    // Elimina metadata
+    responseObj.protocolo = 2; // Protocolo 2: Eliminar
+    sockets->sendS(responseObj.getJson(), "base");
+    response = nlohmann::json(sockets->receiveS("base"));
+    responseObj = Metadata::jsonParse(response);
+    if(responseObj.mensaje == "404"){ //Check for exceptions
+        cout << "Not found\n";
+        responseObj.mensaje = "La imagen no fue encontrada";
+        returning = responseObj.getJson();
+        message.reply(status_codes::NotFound,returning);
+        return;
+    }
+
+        // Elimina imagen
+        sockets->sendS(response, "raid");
+        response = nlohmann::json(sockets->receiveS("base"));
+        responseObj = Metadata::jsonParse(response);
+        if(responseObj.mensaje == "404"){ // Check for exceptions
+        cout << "Error interno: Hay imagen en base de datos, pero no en disco.\n";
+        responseObj.mensaje = "Error, hay imagen en base de datos pero no en disco.\n";
+        returning = responseObj.getJson();
+        message.reply(status_codes::Conflict, returning);
+        return;
+    }
+
+    responseObj.mensaje = "Succesful";
+    returning = responseObj.getJson();
+    ucout <<  "Eliminacion exitosa." << endl;
+    message.reply(status_codes::OK,returning);
+    return ;
 };
 
 
