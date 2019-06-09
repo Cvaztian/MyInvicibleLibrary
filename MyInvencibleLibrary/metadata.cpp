@@ -26,7 +26,6 @@ json Metadata::getJson()
 Metadata Metadata::jsonParse(json jsonToParse)
 {
     Metadata newObj = Metadata();
-    newObj.nombre = jsonToParse["nombre"];
     newObj.galeria = jsonToParse["galeria"];
     newObj.id = jsonToParse["id"];
     newObj.autor = jsonToParse["autor"];
@@ -36,5 +35,6 @@ Metadata Metadata::jsonParse(json jsonToParse)
     newObj.imagen = jsonToParse["imagen"];
     newObj.protocolo = jsonToParse["protocolo"];
     newObj.mensaje = jsonToParse["mensaje"];
+    newObj.nombre = jsonToParse["nombre"];
     return newObj;
 }
