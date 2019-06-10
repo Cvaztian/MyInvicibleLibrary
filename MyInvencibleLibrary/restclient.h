@@ -4,6 +4,7 @@
 #include <cpprest/http_client.h>
 #include <cpprest/filestream.h>
 #include <iostream>
+#include "nlohmann/json.hpp"
 using namespace utility;                    // Common utilities like string conversions
 using namespace web;                        // Common features like URIs.
 using namespace web::http;                  // Common HTTP functionality

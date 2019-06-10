@@ -1,5 +1,6 @@
 #include "restclient.h"
 #include <string>
+#include <iostream>
 
 std::string RestClient::respuesta = "";
 RestClient::RestClient()
@@ -20,7 +21,7 @@ void RestClient::Get(std::string mensaje){
         // Build request URI and start the request.
         uri_builder builder(U("/search"));
         builder.append_query(U("q"), U("cpprestsdk github"));
-        return client.request(methods::PUT, "", mensaje);
+        return client.request(methods::GET, mensaje, mensaje);
     })
 
     // Handle response headers arriving.
@@ -55,7 +56,7 @@ void RestClient::Get(std::string mensaje){
 
 void RestClient::Put(std::string mensaje){
     auto fileStream = std::make_shared<ostream>();
-
+    std::cout<< mensaje<<std::endl;
     // Open stream to output file.
     pplx::task<void> requestTask = fstream::open_ostream(U("results.html")).then([=](ostream outFile)
     {
@@ -67,7 +68,7 @@ void RestClient::Put(std::string mensaje){
         // Build request URI and start the request.
         uri_builder builder(U("/search"));
         builder.append_query(U("q"), U("cpprestsdk github"));
-        return client.request(methods::PUT, "", mensaje);
+        return client.request(methods::PUT, mensaje, "");
     })
 
     // Handle response headers arriving.
@@ -115,7 +116,7 @@ void RestClient::Post(std::string mensaje){
         // Build request URI and start the request.
         uri_builder builder(U("/search"));
         builder.append_query(U("q"), U("cpprestsdk github"));
-        return client.request(methods::PUT, "", mensaje);
+        return client.request(methods::POST, mensaje, mensaje);
     })
 
     // Handle response headers arriving.
@@ -161,7 +162,7 @@ void RestClient::Delete(std::string mensaje){
         // Build request URI and start the request.
         uri_builder builder(U("/search"));
         builder.append_query(U("q"), U("cpprestsdk github"));
-        return client.request(methods::PUT, "", mensaje);
+        return client.request(methods::DEL, mensaje, mensaje);
     })
 
     // Handle response headers arriving.

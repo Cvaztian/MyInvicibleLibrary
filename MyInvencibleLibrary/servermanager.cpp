@@ -168,6 +168,7 @@ void ServerManager::handle_delete(http_request message)
 void ServerManager::handle_put(http_request message)
 {
     ucout << "Operacion put\n";
+     ucout << message.to_string();
 
     // Parsing incoming message
     string returning;
