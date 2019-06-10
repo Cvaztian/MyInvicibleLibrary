@@ -5,15 +5,9 @@
 #include <iostream>
 #include <fstream>
 #include <bits/stdc++.h>
-#include <iostream>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <stdio.h>
-#include <iostream>
-#include <fstream>
-#include "nlohmann/json.hpp"
-#include <sys/types.h>
-#include <sys/stat.h>
 #include "metadata.h"
 
 
@@ -85,6 +79,7 @@ public:
     string Delete(string galeria, string nombre);
 private:
     static int id; /** Contador estatico del id de los archivos*/
+
 
     /** @brief Verifica si existe galeria.
      * Version auxiliar que verifica la existencia de una galeria

@@ -13,6 +13,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include "dbmanager.h"
+#include "clientmanager.h"
 
 using namespace std;
 
@@ -71,6 +72,7 @@ int main () {
         else
            printf("Unable to delete the file");  // No existe
            */
+    /*
     DBManager* manager = new DBManager();
     json j = {
         {"nombre","ala"},
@@ -86,7 +88,9 @@ int main () {
     };
    // cout << manager->Insert(j);
     cout << manager->Delete("misrecuerdos","ala");
-    delete manager;
+    delete manager;*/
+    
+    ClientManager("base");
 
   return 0;
 }
