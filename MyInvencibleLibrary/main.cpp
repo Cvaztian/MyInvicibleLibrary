@@ -27,9 +27,13 @@ vector<char> arr = {'a','l','c'};
             {"protocolo",-1}
     };
     cout << j <<endl;
-j = cliente.Get(j);
-j["id"] = 4;
-cliente.crear(j);
+//j = cliente.Get(j);
+//j["id"] = 4;
+//j["id"] = 4;
+//cliente.eliminar(j);
+//cout<<j.dump();
+//cliente.crear(j);
+
 //a.write("../image.jpg","1");
 //a.read("chunks");
 }

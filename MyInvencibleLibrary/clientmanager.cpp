@@ -75,9 +75,19 @@ json ClientManager::actualizar(json metadata)
 
 json ClientManager::eliminar(json metadata)
 {
+    Metadata metaObj = Metadata::jsonParse(metadata);
         json response;
     if(tipo == "base"){
     }else{
+        string directorio = "../RAID/";
+        for(int i = 1;i<5;i++) {
+            for (int j = 1; j < 4; j++) {
+                const char *eliminar = (directorio +to_string(i)+ "/"+to_string(metaObj.id) + "." + to_string(j)).c_str();
+                remove(eliminar);
+                const char *eliminarP = (directorio + to_string(i)+to_string(metaObj.id) + ".paridad").c_str();
+                remove(eliminarP);
+            }
+        }
     }
 
     return response;
