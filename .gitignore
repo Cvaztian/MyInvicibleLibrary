@@ -10,3 +10,23 @@ MyInvencibleLibrary/dbms/
 MyInvencibleLibrary/include/
 
 MyInvencibleLibrary/static/
+
+MyInvencibleLibrary/build-MyInvencibleLibrary-Desktop_Qt_5_12_1_GCC_64bit-Default/
+
+MyInvencibleLibrary/Build/bin/
+
+MyInvencibleLibrary/dbms/
+
+MyInvencibleLibrary/static/
+
+*.user
+
+Doxygen/html/
+
+Doxygen/latex/
+
+MyInvencibleLibrary/json/
+
+MyInvencibleLibrary/\.idea/
+
+MyInvencibleLibrary/cmake-build-debug/
