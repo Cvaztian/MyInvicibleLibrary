@@ -14,3 +14,9 @@ Doxygen/html/
 Doxygen/latex/
 
 MyInvencibleLibrary/json/
+
+MyInvencibleLibrary/\.idea/
+
+MyInvencibleLibrary/cmake-build-debug
+
+MyInvencibleLibrary/RAID
