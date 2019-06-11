@@ -6,8 +6,8 @@ project(MyInvencibleLibrary)
 set (CMAKE_CXX_STANDARD 11)
 option(DBMS "Dbms" OFF)
 include_directories("${CMAKE_SOURCE_DIR}")
-set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/Build)
-set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/cmake-build-debug)
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread")
 
@@ -20,7 +20,7 @@ add_executable(restserver
 add_executable(restclient clientmain.cpp restclient.cpp restclient.h)
 add_executable(pruebasJson jsonmain.cpp metadata.cpp metadata.h)
 add_executable(socketclient socketclient.cpp clientsocket.cpp clientsocket.h clientmanager.cpp
-    clientmanager.h)
+    clientmanager.h metadata.cpp metadata.h)
 add_executable(socketserver socketserver.cpp serversocket.cpp serversocket.h )
 add_executable(ServerLib libmain.cpp src/handler.cpp
     servermanager.cpp servermanager.h serversocket.h serversocket.cpp
