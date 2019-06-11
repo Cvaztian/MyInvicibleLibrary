@@ -2,7 +2,7 @@
 
 Metadata::Metadata()
 {
-
+    imagen = vector<char>();
 }
 
 json Metadata::getJson()
@@ -32,7 +32,12 @@ Metadata Metadata::jsonParse(json jsonToParse)
     newObj.size = jsonToParse["size"];
     newObj.descripcion = jsonToParse["descripcion"];
     newObj.year = jsonToParse["year"];
-    newObj.imagen = jsonToParse["imagen"];
+    vector<char> im = jsonToParse["imagen"];
+    //const char* img = im.c_str();
+    newObj.imagen = vector<char>();
+    for(int i =0 ; i<im.size(); i++){
+        newObj.imagen.push_back(im[i]);
+    }
     newObj.protocolo = jsonToParse["protocolo"];
     newObj.mensaje = jsonToParse["mensaje"];
     newObj.nombre = jsonToParse["nombre"];

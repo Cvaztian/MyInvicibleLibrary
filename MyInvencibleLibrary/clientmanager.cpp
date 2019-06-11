@@ -2,6 +2,7 @@
 
 char* prb;
 int tam;
+vector<char> img;
 
 ClientManager::ClientManager(string tipo)
 {
@@ -41,12 +42,22 @@ json ClientManager::Get(json metadata)
         tam = aux.first;
         prb = aux.second;
 
-        metaObj.size = tam;
+        metaObj.imagen = vector<char>();
+        img = vector<char>();
+        for(int i =0; i<tam; i++){
+            metaObj.imagen.push_back(prb[i]);
+            img.push_back(prb[i]);
+        }
 
+        //cout << "Imagen:" << metaObj.imagen <<endl;
+        metaObj.size = tam;
+        /*
         ofstream prueba;
         prueba.open("../prueba", ios::out | ios::trunc | ios::binary);
         prueba.write(prb,tam);
-        prueba.close();
+        prueba.close();*/
+
+        response = metaObj.getJson();
     }
     return response;
 }
@@ -56,6 +67,7 @@ json ClientManager::actualizar(json metadata)
         json response;
     if(tipo == "base"){
     }else{
+        // En raid no hay actualizar
     }
 
     return response;
@@ -77,7 +89,9 @@ json ClientManager::crear(json metadata)
     json response;
     if(tipo == "base"){
     }else{
-        RAID::crear_archivo(to_string(metaObj.id), prb, tam);
+        char c[metaObj.imagen.size()];
+        std::copy(metaObj.imagen.begin(), metaObj.imagen.end(), c);
+        RAID::crear_archivo(to_string(metaObj.id), c, tam);
     }
 
     return response;

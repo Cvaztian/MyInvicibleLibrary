@@ -47,7 +47,7 @@ public:
    int size;  /** El tamaño de la imagen en bytes*/
    string descripcion;  /** La descripcion que se le da a la imagen*/
    string year;  /** El año de creacion de la imagen*/
-   string imagen;  /** La imagen en binario*/
+
    string mensaje; /** Cualquier mensaje adicional*/
    /**
      Protocolo del mensaje. Atributo utilizado en la comunicacion por sockets
@@ -58,7 +58,7 @@ public:
      3: Crear;
 */
    int protocolo;
-
+   vector<char> imagen;  /** La imagen en binario, maximo de 2 MB*/
 };
 
 #endif // METADATA_H

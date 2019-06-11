@@ -148,7 +148,7 @@ public:
                         archivos_por_encontrar.erase(std::find(archivos_por_encontrar.begin(), archivos_por_encontrar.end(), counter));
                         fileSize = getFileSize(&fileInput);
                         /*char *inputBuffer = new char[fileSize];
-                        
+
                         fileInput.read(inputBuffer, fileSize);
                         outputfile.write(inputBuffer, fileSize);
 
