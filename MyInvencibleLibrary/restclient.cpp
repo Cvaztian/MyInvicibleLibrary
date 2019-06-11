@@ -21,7 +21,7 @@ void RestClient::Get(std::string mensaje){
         // Build request URI and start the request.
         uri_builder builder(U("/search"));
         builder.append_query(U("q"), U("cpprestsdk github"));
-        return client.request(methods::GET, mensaje, mensaje);
+        return client.request(methods::GET, U(""), mensaje);
     })
 
     // Handle response headers arriving.
@@ -140,7 +140,7 @@ void RestClient::Post(std::string mensaje){
         // Build request URI and start the request.
         uri_builder builder(U("/search"));
         builder.append_query(U("q"), U("cpprestsdk github"));
-        return client.request(methods::POST, mensaje, mensaje);
+        return client.request(methods::POST, U(""), mensaje);
     })
 
     // Handle response headers arriving.
@@ -186,7 +186,7 @@ void RestClient::Delete(std::string mensaje){
         // Build request URI and start the request.
         uri_builder builder(U("/search"));
         builder.append_query(U("q"), U("cpprestsdk github"));
-        return client.request(methods::DEL, mensaje, mensaje);
+        return client.request(methods::DEL, U(""), mensaje);
     })
 
     // Handle response headers arriving.

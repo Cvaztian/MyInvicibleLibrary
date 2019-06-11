@@ -7,14 +7,14 @@
 #include "clientmanager.h"
 
 using namespace std;
-using namespace nlohmann;
 
 int main( int argc, char* argv[] )
 {
 RAID a;
+//a.write("../image.jpg","1");
 ClientManager cliente = ClientManager("raid");
 vector<char> arr = {'a','l','c'};
-    json j = {
+    nlohmann::json j = {
             {"nombre","ala"},
             {"galeria","misrecuerdos"},
             {"autor","Kevin"},
@@ -26,9 +26,8 @@ vector<char> arr = {'a','l','c'};
             {"mensaje",""},
             {"protocolo",-1}
     };
-    cout << j <<endl;
+ //   cout << j["id"] <<endl;
 //j = cliente.Get(j);
-//j["id"] = 4;
 //j["id"] = 4;
 //cliente.eliminar(j);
 //cout<<j.dump();

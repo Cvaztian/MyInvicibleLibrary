@@ -27,8 +27,8 @@ public:
     explicit ClientManager(string tipo);
 
         json Get(json metadata);
-        json crear(json metadata);
-        json eliminar(json metadata);
+        void crear(json metadata);
+        void eliminar(json metadata);
 private:
     ClientSocket* sockets; /** Puntero a la clase encargada de la comunicacion*/
     /** @brief Mainloop

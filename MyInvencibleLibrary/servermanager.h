@@ -42,6 +42,8 @@ public:
     pplx::task<void>close(){return m_listener.close();}
 
 
+
+
 private:
     ServerSocket* sockets;  /** Puntero a la clase que maneja sockets*/
     /** @brief Inicia un socket hacia get.

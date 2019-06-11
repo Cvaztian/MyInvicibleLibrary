@@ -7,11 +7,10 @@ vector<char> img;
 ClientManager::ClientManager(string tipo)
 {
     cout << "Intentando conectar con servidor...\n";
-  //  sockets = new ClientSocket(tipo);
+    sockets = new ClientSocket(tipo);
     cout << "Conectado\n";
     this->tipo = tipo;
     if(tipo == "raid"){
-
     }else if(tipo == "base"){
         baseDatos = new DBManager();
     }else{
@@ -29,39 +28,39 @@ void ClientManager::mainloop()
         response = sockets->receiveS();
         cout<< "Peticion recibida\n";
         cout<<response<<flush;
-        json rsponse = json::parse(response);
+        json rsponse =  json::parse(response);
         Metadata metadataObj = Metadata::jsonParse(rsponse);
         switch(metadataObj.protocolo){
         case 0:
-            cout<<"Protocolo 0: Get\n";
+            cout<<"Protocolo 0: Get\n"<<flush;
             Get(rsponse);
             break;
         case 1:
-            cout << "Protocolo 1: Actualizar\n";
+            cout << "Protocolo 1: Actualizar\n"<<flush;
             actualizar(rsponse);
             break;
         case 2:
-            cout << "Protocolo 2: Eliminar\n";
+            cout << "Protocolo 2: Eliminar\n"<<flush;
             eliminar(rsponse);
             break;
         case 3:
-            cout << "Protocolo 3: Crear\n";
+            cout << "Protocolo 3: Crear\n"<<flush;
             crear(rsponse);
             break;
         }
     }
 }
 
-void ClientManager::Get(json metadata)
+json ClientManager::Get(json metadata)
 {
     Metadata metaObj = Metadata::jsonParse(metadata);
     json response;
-    Metadata metaObj = Metadata::jsonParse(metadata);
+    //Metadata metaObj = Metadata::jsonParse(metadata);
     if(tipo == "base"){
-        response = baseDatos->Select(metaObj.galeria, metaObj.nombre);  // ejecuta el metodo select y lo guarda en response
+        response = baseDatos->Select(metaObj.galeria, metaObj.nombre).dump();  // ejecuta el metodo select y lo guarda en response
         if(response == "404"){ // Si no se encontro la imagen
             metaObj.mensaje = "404";  // Reporta 404
-            response = metaObj.getJson();
+            response = metaObj.getJson().dump();
         }
         sockets->sendS(response);  // Envia respuesta al server
     }else{
@@ -86,8 +85,10 @@ void ClientManager::Get(json metadata)
         prueba.write(prb,tam);
         prueba.close();*/
 
-        response = metaObj.getJson();
+        response = metaObj.getJson().dump();
+        sockets->sendS(response);
     }
+    return response;
 
 }
 
@@ -101,7 +102,7 @@ void ClientManager::actualizar(json metadata)
         if(success == "404"){
             metaObj.mensaje = "404";
         }
-        response = metaObj.getJson();
+        response = metaObj.getJson().dump();
         sockets->sendS(response);
     }else{
         // En raid no hay actualizar
@@ -119,7 +120,7 @@ void ClientManager::eliminar(json metadata)
         if(success=="404"){
             metaObj.mensaje = "404";
         }
-        response = metaObj.getJson();
+        response = metaObj.getJson().dump();
         sockets->sendS(response);
     }else{
         string directorio = "../RAID/";
@@ -137,16 +138,16 @@ void ClientManager::eliminar(json metadata)
 
 void ClientManager::crear(json metadata)
 {
-     json response;
-     const char* sendd = metadata.dump().c_str();
-     string success;
+     json response = {};
+     //const char* sendd = metadata.dump().c_str();
+     string success = "406";
      Metadata metaObj = Metadata::jsonParse(metadata);
     if(tipo == "base"){
         success = baseDatos->Insert(metadata);
         if(success == "406"){
             metaObj.mensaje = "406";
         }
-        response = metaObj.getJson();
+        response = metaObj.getJson().dump();
         sockets->sendS(response);
     }else{
         char c[metaObj.imagen.size()];
