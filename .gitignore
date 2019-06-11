@@ -10,3 +10,9 @@ MyInvencibleLibrary/dbms/
 MyInvencibleLibrary/include/
 
 MyInvencibleLibrary/static/
+
+MyInvencibleLibrary/\.idea/
+
+\.idea/
+
+MyInvencibleLibrary/cmake-build-debug/
