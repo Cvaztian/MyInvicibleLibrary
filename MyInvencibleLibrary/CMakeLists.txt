@@ -25,6 +25,7 @@ add_executable(socketserver socketserver.cpp serversocket.cpp serversocket.h )
 add_executable(ServerLib libmain.cpp src/handler.cpp
     servermanager.cpp servermanager.h serversocket.h serversocket.cpp
     metadata.cpp metadata.h)
+add_executable(RAID main.cpp RAID.h)
 add_subdirectory(json)
 
 set(Casablanca_LIBRARIES "-lboost_system -lcrypto -lssl -lcpprest")
