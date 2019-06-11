@@ -6,6 +6,7 @@
 #include "nlohmann/json.hpp"
 #include "metadata.h"
 #include "RAID.h"
+#include <stdio.h>
 
 using namespace std;
 /** @brief Administra la conexion entre server y cliente mediante sockets
@@ -26,6 +27,7 @@ public:
 
         json Get(json metadata);
         json crear(json metadata);
+        json eliminar(json metadata);
 private:
     ClientSocket* sockets; /** Puntero a la clase encargada de la comunicacion*/
     /** @brief Mainloop
@@ -55,7 +57,7 @@ private:
      * @param metadata El json sobre el que se va a trabajar
      * @returns La respuesta de la base de datos o el raid
 */
-    json eliminar(json metadata);
+
 
    /** @brief Ejecuta Insert
      * Interpretacion de protocolo 1. Ejecuta Insert o lo analogo en la base
