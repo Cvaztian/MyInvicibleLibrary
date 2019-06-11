@@ -1,3 +1,0 @@
-/home/malavassi/Escritorio/MyInvicibleLibrary/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/malavassi/Escritorio/MyInvicibleLibrary/cmake-build-debug/CMakeFiles/MyInvicibleLibrary.dir
-/home/malavassi/Escritorio/MyInvicibleLibrary/cmake-build-debug/CMakeFiles/edit_cache.dir
