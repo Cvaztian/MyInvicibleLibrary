@@ -19,6 +19,8 @@ MyInvencibleLibrary/dbms/
 
 MyInvencibleLibrary/static/
 
+MyInvencibleLibrary/RAID
+
 *.user
 
 Doxygen/html/
