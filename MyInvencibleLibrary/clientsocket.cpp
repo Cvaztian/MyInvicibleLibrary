@@ -40,7 +40,7 @@ void ClientSocket::sendS(string mensaje)
 
 string ClientSocket::receiveS()
 {
-    char* buffer = "";
+    char buffer[1024] = {0};
     read(sock, buffer, 1024);
     return buffer;
 }

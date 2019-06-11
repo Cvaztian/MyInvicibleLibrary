@@ -6,35 +6,64 @@ vector<char> img;
 
 ClientManager::ClientManager(string tipo)
 {
-    //sockets = new ClientSocket(tipo);
+    cout << "Intentando conectar con servidor...\n";
+  //  sockets = new ClientSocket(tipo);
+    cout << "Conectado\n";
     this->tipo = tipo;
+    if(tipo == "raid"){
+
+    }else if(tipo == "base"){
+        baseDatos = new DBManager();
+    }else{
+        cout<<"No wey";
+    }
+    mainloop();
+
 }
 
 void ClientManager::mainloop()
 {
     string response ="";
     while(response != "off"){
+        cout<< "Esperando peticion...\n";
         response = sockets->receiveS();
-        Metadata metadataObj = Metadata::jsonParse(response);
+        cout<< "Peticion recibida\n";
+        cout<<response<<flush;
+        json rsponse = json::parse(response);
+        Metadata metadataObj = Metadata::jsonParse(rsponse);
         switch(metadataObj.protocolo){
         case 0:
-            Get(response);
+            cout<<"Protocolo 0: Get\n";
+            Get(rsponse);
             break;
         case 1:
+            cout << "Protocolo 1: Actualizar\n";
+            actualizar(rsponse);
             break;
         case 2:
+            cout << "Protocolo 2: Eliminar\n";
+            eliminar(rsponse);
             break;
         case 3:
+            cout << "Protocolo 3: Crear\n";
+            crear(rsponse);
             break;
         }
     }
 }
 
-json ClientManager::Get(json metadata)
+void ClientManager::Get(json metadata)
 {
     Metadata metaObj = Metadata::jsonParse(metadata);
     json response;
+    Metadata metaObj = Metadata::jsonParse(metadata);
     if(tipo == "base"){
+        response = baseDatos->Select(metaObj.galeria, metaObj.nombre);  // ejecuta el metodo select y lo guarda en response
+        if(response == "404"){ // Si no se encontro la imagen
+            metaObj.mensaje = "404";  // Reporta 404
+            response = metaObj.getJson();
+        }
+        sockets->sendS(response);  // Envia respuesta al server
     }else{
         char* a = (char*)to_string(metaObj.id).c_str();   // Peligro
         cout << a <<endl;
@@ -59,25 +88,39 @@ json ClientManager::Get(json metadata)
 
         response = metaObj.getJson();
     }
-    return response;
+
 }
 
-json ClientManager::actualizar(json metadata)
+void ClientManager::actualizar(json metadata)
 {
-        json response;
+    json response;
+    string success;
+    Metadata metaObj = Metadata::jsonParse(metadata);
     if(tipo == "base"){
+        success = baseDatos->Update(metadata);
+        if(success == "404"){
+            metaObj.mensaje = "404";
+        }
+        response = metaObj.getJson();
+        sockets->sendS(response);
     }else{
         // En raid no hay actualizar
     }
 
-    return response;
 }
 
-json ClientManager::eliminar(json metadata)
+void ClientManager::eliminar(json metadata)
 {
+    json response;
+    string success;
     Metadata metaObj = Metadata::jsonParse(metadata);
-        json response;
     if(tipo == "base"){
+        success = baseDatos->Delete(metaObj.galeria, metaObj.nombre);
+        if(success=="404"){
+            metaObj.mensaje = "404";
+        }
+        response = metaObj.getJson();
+        sockets->sendS(response);
     }else{
         string directorio = "../RAID/";
         for(int i = 1;i<5;i++) {
@@ -90,19 +133,25 @@ json ClientManager::eliminar(json metadata)
         }
     }
 
-    return response;
 }
 
-json ClientManager::crear(json metadata)
+void ClientManager::crear(json metadata)
 {
-    Metadata metaObj = Metadata::jsonParse(metadata);
-    json response;
+     json response;
+     const char* sendd = metadata.dump().c_str();
+     string success;
+     Metadata metaObj = Metadata::jsonParse(metadata);
     if(tipo == "base"){
+        success = baseDatos->Insert(metadata);
+        if(success == "406"){
+            metaObj.mensaje = "406";
+        }
+        response = metaObj.getJson();
+        sockets->sendS(response);
     }else{
         char c[metaObj.imagen.size()];
         std::copy(metaObj.imagen.begin(), metaObj.imagen.end(), c);
         RAID::crear_archivo(to_string(metaObj.id), c, tam);
     }
 
-    return response;
 }

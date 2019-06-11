@@ -5,6 +5,7 @@
 #include "clientsocket.h"
 #include "nlohmann/json.hpp"
 #include "metadata.h"
+#include "dbmanager.h"
 #include "RAID.h"
 #include <stdio.h>
 
@@ -38,7 +39,6 @@ private:
     /** @brief Ejecuta get
      * Interpretacion de protocolo 0. Ejecuta get ya sea en la base de datos
      * o en el raid.
-     * @param metadata El json sobre el que se va a trabajar
      * @returns La respuesta de la base de datos o el raid
 */
 
@@ -46,15 +46,13 @@ private:
     /** @brief Ejecuta Update
      * Interpretacion de protocolo 1. Ejecuta Update o lo analogo en la base
      * de datos o el raid.
-     * @param metadata El json sobre el que se va a trabajar
      * @returns La respuesta de la base de datos o el raid
 */
-    json actualizar(json metadata);
+    void actualizar(json metadata);
 
     /** @brief Ejecuta Delete
      * Interpretacion de protocolo 1. Ejecuta Delete o lo analogo en la base
      * de datos o el raid.
-     * @param metadata El json sobre el que se va a trabajar
      * @returns La respuesta de la base de datos o el raid
 */
 
@@ -62,15 +60,13 @@ private:
    /** @brief Ejecuta Insert
      * Interpretacion de protocolo 1. Ejecuta Insert o lo analogo en la base
      * de datos o el raid.
-     * @param metadata El json sobre el que se va a trabajar
      * @returns La respuesta de la base de datos o el raid
 */
 
 
     string tipo; /** Tipo de cliente*/
-    
-    
-    
+    DBManager* baseDatos;  /** La base de datos*/
+
 };
 
 #endif // CLIENTMANAGER_H

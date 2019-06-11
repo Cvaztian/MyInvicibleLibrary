@@ -168,11 +168,19 @@ void ServerManager::handle_delete(http_request message)
 void ServerManager::handle_put(http_request message)
 {
     ucout << "Operacion put\n";
+     ucout << message.to_string();
 
-    // Parsing incoming message
+     // Parsing mensaje entrante
+    pplx::task<utility::string_t> body_json = message.extract_string();
+    std::string jsonstr=utility::conversions::to_utf8string(body_json.get());
+
+    nlohmann::json orasi = nlohmann::json::parse(jsonstr);
+
+    cout << orasi["id"] << endl;
+
     string returning;
-    string contenido = message.to_string();
-    nlohmann::json response = nlohmann::json::parse(contenido); // Convierto a json
+    //string contenido = message.to_string();
+    nlohmann::json response = orasi; // Convierto a json
     Metadata responseObj = Metadata::jsonParse(response);  // Objeto metadata
 
     // Escribe metadata
