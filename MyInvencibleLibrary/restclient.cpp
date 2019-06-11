@@ -57,6 +57,14 @@ void RestClient::Get(std::string mensaje){
 void RestClient::Put(nlohmann::json mensaje){
     // Json normal to Casablanca
 
+    // Lo siguiente es necesario para mantener la imagen intacta
+    std::vector<char> asd = mensaje["imagen"];
+    std::vector<json::value> ll;
+    for(int i = 0;i<asd.size();i++){
+        ll.push_back(json::value(asd[i]));
+    }
+    // Listo
+
     json::value postData;
 
     postData["nombre"] = json::value::string(U(mensaje["nombre"]));
@@ -66,7 +74,7 @@ void RestClient::Put(nlohmann::json mensaje){
     postData["year"] = json::value::string(U(mensaje["year"]));
     postData["id"] = json::value((int)mensaje["id"]);
     postData["size"] = json::value((int)(mensaje["size"]));
-    //postData["imagen"] = json::value((std::vector<char>)(mensaje["imagen"]));
+    postData["imagen"] = json::value::array(ll);
     postData["mensaje"] = json::value::string(U(mensaje["mensaje"]));
     postData["protocolo"] = json::value((int)(mensaje["protocolo"]));
 
