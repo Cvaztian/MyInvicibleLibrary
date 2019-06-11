@@ -23,6 +23,9 @@ public:
      * @param tipo El tipo de cliente que es.
 */
     explicit ClientManager(string tipo);
+
+        json Get(json metadata);
+        json crear(json metadata);
 private:
     ClientSocket* sockets; /** Puntero a la clase encargada de la comunicacion*/
     /** @brief Mainloop
@@ -36,7 +39,7 @@ private:
      * @param metadata El json sobre el que se va a trabajar
      * @returns La respuesta de la base de datos o el raid
 */
-    json Get(json metadata);
+
 
     /** @brief Ejecuta Update
      * Interpretacion de protocolo 1. Ejecuta Update o lo analogo en la base
@@ -60,7 +63,7 @@ private:
      * @param metadata El json sobre el que se va a trabajar
      * @returns La respuesta de la base de datos o el raid
 */
-    json crear(json metadata);
+
 
     string tipo; /** Tipo de cliente*/
     

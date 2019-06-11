@@ -107,9 +107,9 @@ public:
      * proceso. Si se pierde la paridad la recalcula.
      * @param chunkName nombre del archivo que se quiere generar (leer)
      */
-    static char* read(char *chunkName) {
+    static pair<int, char*> read(char *chunkName) {
         string fileName;
-        char *fileOutput = chunkName;
+        char *fileOutput = "tmp";
         // Create our output file
         ofstream outputfile;
         outputfile.open("../" + (string) fileOutput, ios::out | ios::binary);
@@ -147,11 +147,14 @@ public:
                         carpetas_por_encontrar.pop_back();
                         archivos_por_encontrar.erase(std::find(archivos_por_encontrar.begin(), archivos_por_encontrar.end(), counter));
                         fileSize = getFileSize(&fileInput);
-                        char *inputBuffer = new char[fileSize];
+                        /*char *inputBuffer = new char[fileSize];
+                        
                         fileInput.read(inputBuffer, fileSize);
                         outputfile.write(inputBuffer, fileSize);
+
+                        // cout<<"BERGA\n";
                         particiones.push_back(inputBuffer);
-                        delete (inputBuffer);
+                        delete (inputBuffer);*/
                         cout << "Se finalizo la busqueda de trozos" << endl;
                         outputfile.close();
                         fileInput.close();
@@ -221,7 +224,8 @@ public:
             }
             cout << "File assembly complete!" << endl;
             ifstream retornable;
-            retornable.open("../"+(string)chunkName, ios::in | ios::binary);
+            retornable.open("../tmp", ios::in | ios::binary);
+            cout << "Estoy abriendo" << "../"+(string)chunkName << endl;
             if (retornable.is_open()) {
                 int size = getFileSize(&retornable);
                 string fullChunkName;
@@ -229,11 +233,17 @@ public:
 
                 // Create a buffer to hold each chunk
                 char* retorno = new char[size];
+
                 // Keep reading until end of file
                     if (retornable.is_open()) {
                         retornable.read(retorno, size);
-                        cout << "El archivo en bytes es: " << retorno << endl;
-                        return retorno;
+                        retornable.close();
+                        int pp = 0;
+                        pair<int, char*> salida;
+                        salida.first = size;
+
+                        salida.second = retorno;
+                        return salida;
                     }else{
                         cout << "No encontre el archivo generado para su conversion a char*" << endl;
                     }
@@ -480,6 +490,15 @@ public:
         }
         archivo.close();
         delete(paridad);
+    }
+
+    static void crear_archivo(string nombre, char* buffer, int tam){
+        ofstream prueba;
+        prueba.open("../tmp", ios::out | ios::trunc | ios::binary);
+        prueba.write(buffer,tam);
+        char* a = (char*)nombre.c_str();
+        write("../tmp",a);
+        prueba.close();
     }
 };
 

@@ -1,5 +1,8 @@
 #include "clientmanager.h"
 
+char* prb;
+int tam;
+
 ClientManager::ClientManager(string tipo)
 {
     //sockets = new ClientSocket(tipo);
@@ -34,7 +37,16 @@ json ClientManager::Get(json metadata)
     }else{
         char* a = (char*)to_string(metaObj.id).c_str();   // Peligro
         cout << a <<endl;
-        cout << RAID::read(a) << endl;
+        pair<int, char*> aux = RAID::read(a);
+        tam = aux.first;
+        prb = aux.second;
+
+        metaObj.size = tam;
+
+        ofstream prueba;
+        prueba.open("../prueba", ios::out | ios::trunc | ios::binary);
+        prueba.write(prb,tam);
+        prueba.close();
     }
     return response;
 }
@@ -61,9 +73,11 @@ json ClientManager::eliminar(json metadata)
 
 json ClientManager::crear(json metadata)
 {
-        json response;
+    Metadata metaObj = Metadata::jsonParse(metadata);
+    json response;
     if(tipo == "base"){
     }else{
+        RAID::crear_archivo(to_string(metaObj.id), prb, tam);
     }
 
     return response;
