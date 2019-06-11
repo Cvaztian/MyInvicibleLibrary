@@ -170,6 +170,13 @@ void ServerManager::handle_put(http_request message)
     ucout << "Operacion put\n";
      ucout << message.to_string();
 
+    pplx::task<utility::string_t> body_json = message.extract_string();
+    std::string jsonstr=utility::conversions::to_utf8string(body_json.get());
+
+    nlohmann::json orasi = nlohmann::json::parse(jsonstr);
+
+    cout << orasi["id"] << endl;
+
     // Parsing incoming message
     string returning;
     string contenido = message.to_string();

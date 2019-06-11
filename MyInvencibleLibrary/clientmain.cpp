@@ -54,21 +54,24 @@ int main(int argc, char* argv[])
 
     return 0;*/
     std::cout<<RestClient::respuesta;
+    std::vector<char> alas = {'a','b','c'};
     nlohmann::json j = {
         {"nombre","ala"},
         {"galeria","misrecuerdos"},
         {"autor","Kevin"},
         {"descripcion","Quesuenno!!"},
         {"year","2019"},
-        {"id","-1"},
-        {"size","-1"},
-        {"imagen",""},
+        {"id",-1},
+        {"size",-1},
+        {"imagen", alas},
         {"mensaje",""},
-        {"protocolo","-1"}
+        {"protocolo",-1}
     };
-    std::cout << j <<std::endl;
-    std::string js = j.dump();
-    RestClient::Put(js);
+    //std::cout << j <<std::endl;
+    std::string jss = j.dump();
+    const char* js = jss.c_str();
+    std::cout << js<<std::flush;
+    RestClient::Put(j);
     std::cout<<RestClient::respuesta;
 
     return 0;

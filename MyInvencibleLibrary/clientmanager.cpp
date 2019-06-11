@@ -101,6 +101,7 @@ void ClientManager::eliminar(json metadata)
 void ClientManager::crear(json metadata)
 {
      json response;
+     const char* sendd = metadata.dump().c_str();
      string success;
      Metadata metaObj = Metadata::jsonParse(metadata);
     if(tipo == "base"){

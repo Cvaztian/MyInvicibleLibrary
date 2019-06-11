@@ -36,7 +36,7 @@ public:
       @author Elorim
       @returns Respuesta del servidor en la variable respuesta
 */
-    static void Put(std::string mensaje);
+    static void Put(nlohmann::json mensaje);
     /**
       Metodo HTML POST.
       @param mensaje Mensaje a enviar
