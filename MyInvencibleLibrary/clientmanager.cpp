@@ -2,7 +2,7 @@
 
 ClientManager::ClientManager(string tipo)
 {
-    sockets = new ClientSocket(tipo);
+    //sockets = new ClientSocket(tipo);
     this->tipo = tipo;
 }
 
@@ -28,11 +28,14 @@ void ClientManager::mainloop()
 
 json ClientManager::Get(json metadata)
 {
+    Metadata metaObj = Metadata::jsonParse(metadata);
     json response;
     if(tipo == "base"){
     }else{
+        char* a = (char*)to_string(metaObj.id).c_str();   // Peligro
+        cout << a <<endl;
+        cout << RAID::read(a) << endl;
     }
-
     return response;
 }
 

@@ -5,6 +5,7 @@
 #include "clientsocket.h"
 #include "nlohmann/json.hpp"
 #include "metadata.h"
+#include "RAID.h"
 
 using namespace std;
 /** @brief Administra la conexion entre server y cliente mediante sockets
@@ -62,6 +63,9 @@ private:
     json crear(json metadata);
 
     string tipo; /** Tipo de cliente*/
+    
+    
+    
 };
 
 #endif // CLIENTMANAGER_H

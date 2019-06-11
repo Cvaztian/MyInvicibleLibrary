@@ -25,7 +25,11 @@ add_executable(socketserver socketserver.cpp serversocket.cpp serversocket.h )
 add_executable(ServerLib libmain.cpp src/handler.cpp
     servermanager.cpp servermanager.h serversocket.h serversocket.cpp
     metadata.cpp metadata.h)
-add_executable(RAID main.cpp RAID.h)
+add_executable(RAID main.cpp RAID.h
+        clientmanager.h clientmanager.cpp
+        clientsocket.h clientsocket.cpp
+        metadata.h metadata.cpp
+        )
 add_subdirectory(json)
 
 set(Casablanca_LIBRARIES "-lboost_system -lcrypto -lssl -lcpprest")
@@ -43,6 +47,7 @@ else(DBMS)
         target_link_libraries(socketclient  nlohmann_json::nlohmann_json)
         target_link_libraries(socketserver  nlohmann_json::nlohmann_json)
         target_link_libraries(ServerLib nlohmann_json::nlohmann_json ${Casablanca_LIBRARIES})
+    target_link_libraries(RAID nlohmann_json::nlohmann_json)
 endif(DBMS)
 
 
