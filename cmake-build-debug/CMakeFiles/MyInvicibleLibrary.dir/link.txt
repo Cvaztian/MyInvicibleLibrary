@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/MyInvicibleLibrary.dir/main.cpp.o  -o MyInvicibleLibrary 
