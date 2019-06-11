@@ -463,8 +463,6 @@ public:
         archivo.close();
         delete(paridad);
     }
-
-
 };
 
 
