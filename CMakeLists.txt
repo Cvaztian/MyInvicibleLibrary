@@ -3,4 +3,4 @@ project(MyInvicibleLibrary)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(MyInvicibleLibrary main.cpp auxiliar.h)
+add_executable(MyInvicibleLibrary main.cpp RAID.h)

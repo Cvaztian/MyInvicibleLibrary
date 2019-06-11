@@ -2,15 +2,15 @@
 #include <fstream>
 #include <iostream>
 #include <cstring>
-#include "auxiliar.h"
+#include "RAID.h"
 
 using namespace std;
 
 int main( int argc, char* argv[] )
 {
-auxiliar a;
-//a.chunkFile("../image.jpg","chunks");
-a.joinFile("chunks","resultado");
+RAID a;
+//a.write("../image.jpg","chunks");
+    a.read("chunks", "resultado");
 
 }
 
