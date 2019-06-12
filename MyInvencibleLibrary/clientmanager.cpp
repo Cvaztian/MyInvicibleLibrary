@@ -25,7 +25,7 @@ void ClientManager::mainloop()
     string response ="";
     while(response != "off"){
         cout<< "Esperando peticion...\n";
-        response = sockets->receiveS();
+        response = sockets->specialReceive();
         cout<< "Peticion recibida\n";
         cout<<response<<flush;
         json rsponse =  json::parse(response);
@@ -85,8 +85,8 @@ json ClientManager::Get(json metadata)
         prueba.write(prb,tam);
         prueba.close();*/
 
-        response = metaObj.getJson().dump();
-        sockets->sendS(response);
+        response = metaObj.getJson();
+        sockets->sendS(response.dump());
     }
     return response;
 
@@ -112,26 +112,29 @@ void ClientManager::actualizar(json metadata)
 
 void ClientManager::eliminar(json metadata)
 {
-    json response;
+    json response = Metadata::getEmptyJson();
     string success;
+    success = "Exito";
     Metadata metaObj = Metadata::jsonParse(metadata);
     if(tipo == "base"){
         success = baseDatos->Delete(metaObj.galeria, metaObj.nombre);
         if(success=="404"){
             metaObj.mensaje = "404";
         }
-        response = metaObj.getJson().dump();
-        sockets->sendS(response);
+        response = metaObj.getJson();
+        sockets->sendS(response.dump());
     }else{
         string directorio = "../RAID/";
         for(int i = 1;i<5;i++) {
             for (int j = 1; j < 4; j++) {
                 const char *eliminar = (directorio +to_string(i)+ "/"+to_string(metaObj.id) + "." + to_string(j)).c_str();
                 remove(eliminar);
-                const char *eliminarP = (directorio + to_string(i)+to_string(metaObj.id) + ".paridad").c_str();
-                remove(eliminarP);
+                string eliminarP = (directorio + to_string(i)+"/"+to_string(metaObj.id) + ".paridad");
+                cout << "Ay la par "<<eliminarP;
+                remove(eliminarP.c_str());
             }
         }
+        sockets->sendS(Metadata::getEmptyJson().dump());
     }
 
 }
@@ -141,7 +144,7 @@ void ClientManager::crear(json metadata)
      json response = {};
      //const char* sendd = metadata.dump().c_str();
      string success = "406";
-     Metadata metaObj = Metadata::jsonParse(metadata);
+     Metadata metaObj = Metadata::jsonParseFile(metadata);
     if(tipo == "base"){
         success = baseDatos->Insert(metadata);
         if(success == "406"){

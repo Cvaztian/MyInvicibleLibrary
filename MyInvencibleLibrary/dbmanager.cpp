@@ -45,7 +45,9 @@ json DBManager::Select(string galeria, string nombre)
         infile.close();
          return response;
     }else{  // Si no existe alguno
-        return "404";
+        json response = Metadata::getEmptyJson();
+        response["mensaje"] = "404";
+        return response;
     }
 }
 
@@ -54,13 +56,13 @@ string DBManager::Update(json metadata)
     Metadata metadataObj = Metadata::jsonParse(metadata);
     if(checkGalery(metadataObj.galeria) && checkFile(metadataObj.nombre,metadataObj.galeria)){ // Check existence
         json old = Select(metadataObj.galeria, metadataObj.nombre);
-        Metadata MetadataOld = Metadata::jsonParse(old);
+        Metadata MetadataOld = Metadata::jsonParseFile(old);
         metadataObj.id = MetadataOld.id;  // El id no se puede sobreescribir
         string spath = metadataObj.galeria + "/" + metadataObj.nombre+".json";
         const char* path = spath.c_str();
         ofstream myfile;
         myfile.open (path);  // Se puede especificar una carpeta, si existe, crea el archivo dentro, si no, no hace nada.
-        myfile << metadataObj.getJson();  // Esto crea un nuevo archivo y reescribe todo lo que hay en el
+        myfile << metadataObj.getJsonFile();  // Esto crea un nuevo archivo y reescribe todo lo que hay en el
         myfile.close();
         return "Success";
     }else{
@@ -85,17 +87,18 @@ string DBManager::Insert(json metadata)
         ofstream myfile;
         string spath = metadataObj.galeria + "/" + metadataObj.nombre+".json";
         myfile.open (spath.c_str());  // Se puede especificar una carpeta, si existe, crea el archivo dentro, si no, no hace nada.
-        myfile << metadataObj.getJson();  // Esto crea un nuevo archivo y reescribe todo lo que hay en el
+        myfile << metadataObj.getJsonFile();  // Esto crea un nuevo archivo y reescribe todo lo que hay en el
         myfile.close();
         return "Success";
-    }else if(checkGalery(metadataObj.galeria)){
+    }else if(checkGalery(metadataObj.galeria) && !checkFile(metadataObj.nombre, metadataObj.galeria)){
         // Crea file
         int nid = DBManager::id;  // Id del archivo
         DBManager::id++;
         metadataObj.id = nid;  // Asigna el id
         ofstream myfile;
-        myfile.open ("./example.json");  // Se puede especificar una carpeta, si existe, crea el archivo dentro, si no, no hace nada.
-        myfile << metadataObj.getJson();  // Esto crea un nuevo archivo y reescribe todo lo que hay en el
+        string spath = metadataObj.galeria + "/" + metadataObj.nombre+".json";
+        myfile.open (spath);  // Se puede especificar una carpeta, si existe, crea el archivo dentro, si no, no hace nada.
+        myfile << metadataObj.getJsonFile();  // Esto crea un nuevo archivo y reescribe todo lo que hay en el
         myfile.close();
         return "Success";
     }else{
@@ -122,8 +125,7 @@ bool DBManager::checkGalery(string galeria)
         if( stat( pathname, &info ) != 0 ){
             printf( "cannot access %s\n", pathname );  // No existe
             return false;
-        }
-        else if( info.st_mode & S_IFDIR ){  // S_ISDIR() doesn't exist on my windows
+        } else if( info.st_mode & S_IFDIR ){  // S_ISDIR() doesn't exist on my windows
             printf( "%s is a directory\n", pathname );  // Existe
             return true;
         }

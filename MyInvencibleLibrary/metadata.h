@@ -31,6 +31,21 @@ public:
 */
     nlohmann::json getJson();
 
+    /** @brief Json to file
+     * Cuando se va a escribir la metadata en archivos, esta no deberia contener algunos
+     * campos. Este metodo elimina esos campos para poder escribir bien.
+     * @returns Json que representa los datos de la clase
+     * @author Elorim
+     * */
+    nlohmann::json getJsonFile();
+
+    /** @brief Json vacio
+     * Retorna un Json vacio para efecto de errores.
+     * @returns Json vacio
+     * @author Elorim
+     * */
+     static nlohmann::json getEmptyJson();
+
     /**
       Este metodo estatico puede llamarse de cualquier lugar y retorna un objeto
       Metadata a partir de un json dado.
@@ -39,6 +54,12 @@ public:
       @author Elorim
 */
     static Metadata jsonParse(nlohmann::json jsonToParse);
+
+    /** @brief Json from file
+     * Cuando se va a leer de un archivo, este no contiene algunos campos. Este metodo
+     * prevee eso y llena esos campos que no deberian estar en un file.
+     * */
+    static Metadata jsonParseFile(nlohmann::json jsonToParse);
     // Atributos
    string nombre; /** El nombre de la imagen*/
    string galeria;  /** La galeria a la que pertenece la imagen*/

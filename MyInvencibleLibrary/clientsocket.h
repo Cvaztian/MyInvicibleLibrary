@@ -40,6 +40,14 @@ public:
      * @returns Mensaje recibido
 */
     string receiveS();
+
+    /** @brief receiveS with extra space
+     * Este metodo se utiliza para enviar y recibir metadata con su respectiva imagen,
+     * esto porque las imagenes ocupan mucho mas espacio que el metodo recibir normal.
+     * @param socket Sockect a enviar, tipo std::string. Puede ser base o raid, solamente.
+     * @author Elorim
+     * */
+    std::string specialReceive();
 private:
     string tipo; /** Guarda el tipo de cliente que es*/
     int sock; /** Socket del servidor*/

@@ -92,7 +92,19 @@ std::string ServerSocket::receiveS(std::string socket)
     }else if(socket == "base"){
         socketnum = base;
     }
-    char buffer[1024+2000000] = {0};
-    read(socketnum, buffer, 1024+2000000);
+    char buffer[1024] = {0};
+    read(socketnum, buffer, 1024);
+    return buffer;
+}
+
+std::string ServerSocket::specialReceive(std::string socket) {
+    int socketnum =0;
+    if(socket == "raid"){
+        socketnum = raid;
+    }else if(socket == "base"){
+        socketnum = base;
+    }
+    char buffer[7000000] = {0};
+    read(socketnum, buffer, 7000000);
     return buffer;
 }
