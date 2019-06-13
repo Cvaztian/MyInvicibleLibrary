@@ -2,6 +2,9 @@
 #include <cpprest/filestream.h>
 #include <iostream>
 #include "restclient.h"
+#include "nlohmann/json.hpp"
+#include "metadata.h"
+
 using namespace utility;                    // Common utilities like string conversions
 using namespace web;                        // Common features like URIs.
 using namespace web::http;                  // Common HTTP functionality
@@ -53,7 +56,28 @@ int main(int argc, char* argv[])
 
     return 0;*/
     std::cout<<RestClient::respuesta;
-    RestClient::Get("aa");
+    std::vector<char> alas = {'a','b','c'};
+    nlohmann::json j = {
+        {"nombre","alaasds"},
+        {"galeria","misrecuerdos"},
+        {"autor","Malapraxi"},
+        {"descripcion","alalalala"},
+        {"year","2077"},
+        {"id",1},
+        {"size",-1},
+        {"imagen", alas},
+        {"mensaje",""},
+        {"protocolo",-1}
+    };
+    //std::cout << j <<std::endl;
+    std::string jss = j.dump();
+    const char* js = jss.c_str();
+    //std::cout << js << std::flush;
+    RestClient::Put(j);
+    //RestClient::Post(j.dump());
+    //RestClient::Get(j.dump());
+    //std::cout << RestClient::respuesta;
+    //RestClient::Delete(j.dump());
     std::cout<<RestClient::respuesta;
 
     return 0;
