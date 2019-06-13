@@ -5,6 +5,9 @@
 #include "clientsocket.h"
 #include "nlohmann/json.hpp"
 #include "metadata.h"
+#include "dbmanager.h"
+#include "RAID.h"
+#include <stdio.h>
 
 using namespace std;
 /** @brief Administra la conexion entre server y cliente mediante sockets
@@ -22,6 +25,10 @@ public:
      * @param tipo El tipo de cliente que es.
 */
     explicit ClientManager(string tipo);
+
+        json Get(json metadata);
+        void crear(json metadata);
+        void eliminar(json metadata);
 private:
     ClientSocket* sockets; /** Puntero a la clase encargada de la comunicacion*/
     /** @brief Mainloop
@@ -32,36 +39,34 @@ private:
     /** @brief Ejecuta get
      * Interpretacion de protocolo 0. Ejecuta get ya sea en la base de datos
      * o en el raid.
-     * @param metadata El json sobre el que se va a trabajar
      * @returns La respuesta de la base de datos o el raid
 */
-    json Get(json metadata);
+
 
     /** @brief Ejecuta Update
      * Interpretacion de protocolo 1. Ejecuta Update o lo analogo en la base
      * de datos o el raid.
-     * @param metadata El json sobre el que se va a trabajar
      * @returns La respuesta de la base de datos o el raid
 */
-    json actualizar(json metadata);
+    void actualizar(json metadata);
 
     /** @brief Ejecuta Delete
      * Interpretacion de protocolo 1. Ejecuta Delete o lo analogo en la base
      * de datos o el raid.
-     * @param metadata El json sobre el que se va a trabajar
      * @returns La respuesta de la base de datos o el raid
 */
-    json eliminar(json metadata);
+
 
    /** @brief Ejecuta Insert
      * Interpretacion de protocolo 1. Ejecuta Insert o lo analogo en la base
      * de datos o el raid.
-     * @param metadata El json sobre el que se va a trabajar
      * @returns La respuesta de la base de datos o el raid
 */
-    json crear(json metadata);
+
 
     string tipo; /** Tipo de cliente*/
+    DBManager* baseDatos;  /** La base de datos*/
+
 };
 
 #endif // CLIENTMANAGER_H

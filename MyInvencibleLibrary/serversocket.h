@@ -40,6 +40,15 @@ public:
      * @author Elorim
 */
     std::string receiveS(std::string socket);
+
+    /** @brief receiveS with extra space
+     * Este metodo se utiliza para enviar y recibir metadata con su respectiva imagen,
+     * esto porque las imagenes ocupan mucho mas espacio que el metodo recibir normal.
+     * @param socket Sockect a enviar, tipo std::string. Puede ser base o raid, solamente.
+     * @author Elorim
+     * */
+    std::string specialReceive(std::string socket);
+
 private:
     int base;  /** Socket de la base de datos*/
     int raid; /** Socket del raid*/

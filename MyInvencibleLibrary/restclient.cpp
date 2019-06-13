@@ -1,5 +1,6 @@
 #include "restclient.h"
 #include <string>
+#include <iostream>
 
 std::string RestClient::respuesta = "";
 RestClient::RestClient()
@@ -20,7 +21,7 @@ void RestClient::Get(std::string mensaje){
         // Build request URI and start the request.
         uri_builder builder(U("/search"));
         builder.append_query(U("q"), U("cpprestsdk github"));
-        return client.request(methods::PUT, "", mensaje);
+        return client.request(methods::GET, U(""), mensaje);
     })
 
     // Handle response headers arriving.
@@ -53,9 +54,34 @@ void RestClient::Get(std::string mensaje){
 
 }
 
-void RestClient::Put(std::string mensaje){
-    auto fileStream = std::make_shared<ostream>();
+void RestClient::Put(nlohmann::json mensaje){
+    // Json normal to Casablanca
 
+    // Lo siguiente es necesario para mantener la imagen intacta
+    std::vector<char> asd = mensaje["imagen"];
+    std::vector<json::value> ll;
+    for(int i = 0;i<asd.size();i++){
+        ll.push_back(json::value(asd[i]));
+    }
+    // Listo
+
+    json::value postData;
+
+    postData["nombre"] = json::value::string(U(mensaje["nombre"]));
+    postData["galeria"] = json::value::string(U(mensaje["galeria"]));
+    postData["autor"] = json::value::string(U(mensaje["autor"]));
+    postData["descripcion"] = json::value::string(U(mensaje["descripcion"]));
+    postData["year"] = json::value::string(U(mensaje["year"]));
+    postData["id"] = json::value((int)mensaje["id"]);
+    postData["size"] = json::value((int)(mensaje["size"]));
+    postData["imagen"] = json::value::array(ll);
+    postData["mensaje"] = json::value::string(U(mensaje["mensaje"]));
+    postData["protocolo"] = json::value((int)(mensaje["protocolo"]));
+
+
+
+    auto fileStream = std::make_shared<ostream>();
+    std::cout<< mensaje<<std::endl;
     // Open stream to output file.
     pplx::task<void> requestTask = fstream::open_ostream(U("results.html")).then([=](ostream outFile)
     {
@@ -67,9 +93,8 @@ void RestClient::Put(std::string mensaje){
         // Build request URI and start the request.
         uri_builder builder(U("/search"));
         builder.append_query(U("q"), U("cpprestsdk github"));
-        return client.request(methods::PUT, "", mensaje);
+        return client.request(methods::PUT, U(""), postData.to_string().c_str(), U("application/json"));
     })
-
     // Handle response headers arriving.
     .then([=](http_response response)
     {
@@ -115,7 +140,7 @@ void RestClient::Post(std::string mensaje){
         // Build request URI and start the request.
         uri_builder builder(U("/search"));
         builder.append_query(U("q"), U("cpprestsdk github"));
-        return client.request(methods::PUT, "", mensaje);
+        return client.request(methods::POST, U(""), mensaje);
     })
 
     // Handle response headers arriving.
@@ -161,7 +186,7 @@ void RestClient::Delete(std::string mensaje){
         // Build request URI and start the request.
         uri_builder builder(U("/search"));
         builder.append_query(U("q"), U("cpprestsdk github"));
-        return client.request(methods::PUT, "", mensaje);
+        return client.request(methods::DEL, U(""), mensaje);
     })
 
     // Handle response headers arriving.

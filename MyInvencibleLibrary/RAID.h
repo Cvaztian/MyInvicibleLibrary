@@ -24,7 +24,7 @@ public:
  * @param fullFilePath ruta del archivo que se quiere almacenar
  * @param chunkName nombre del archivo con el que se almacenaran los trozos
  */
-    void write(char *fullFilePath, char *chunkName) {
+    static void write(char *fullFilePath, char *chunkName) {
         ifstream fileStream;
         fileStream.open(fullFilePath, ios::in | ios::binary);
         // File open a success
@@ -107,9 +107,9 @@ public:
      * proceso. Si se pierde la paridad la recalcula.
      * @param chunkName nombre del archivo que se quiere generar (leer)
      */
-    void read(char *chunkName) {
+    static pair<int, char*> read(char *chunkName) {
         string fileName;
-        char *fileOutput = chunkName;
+        char *fileOutput = "tmp";
         // Create our output file
         ofstream outputfile;
         outputfile.open("../" + (string) fileOutput, ios::out | ios::binary);
@@ -147,11 +147,14 @@ public:
                         carpetas_por_encontrar.pop_back();
                         archivos_por_encontrar.erase(std::find(archivos_por_encontrar.begin(), archivos_por_encontrar.end(), counter));
                         fileSize = getFileSize(&fileInput);
-                        char *inputBuffer = new char[fileSize];
+                        /*char *inputBuffer = new char[fileSize];
+
                         fileInput.read(inputBuffer, fileSize);
                         outputfile.write(inputBuffer, fileSize);
+
+                        // cout<<"BERGA\n";
                         particiones.push_back(inputBuffer);
-                        delete (inputBuffer);
+                        delete (inputBuffer);*/
                         cout << "Se finalizo la busqueda de trozos" << endl;
                         outputfile.close();
                         fileInput.close();
@@ -220,7 +223,31 @@ public:
                 }
             }
             cout << "File assembly complete!" << endl;
+            ifstream retornable;
+            retornable.open("../tmp", ios::in | ios::binary);
+            cout << "Estoy abriendo" << "../"+(string)chunkName << endl;
+            if (retornable.is_open()) {
+                int size = getFileSize(&retornable);
+                string fullChunkName;
+                cout << "El tamano del archivo es: " << size << endl;
 
+                // Create a buffer to hold each chunk
+                char* retorno = new char[size];
+
+                // Keep reading until end of file
+                    if (retornable.is_open()) {
+                        retornable.read(retorno, size);
+                        retornable.close();
+                        int pp = 0;
+                        pair<int, char*> salida;
+                        salida.first = size;
+
+                        salida.second = retorno;
+                        return salida;
+                    }else{
+                        cout << "No encontre el archivo generado para su conversion a char*" << endl;
+                    }
+            }
 
         }else { cout << "Error: Unable to open file for output." << endl; }
     }
@@ -230,7 +257,7 @@ public:
      *
      * @param chunkName
      */
-    void seek(char *chunkName) {
+    static void seek(char *chunkName) {
         string fileName;
 
         // If successful, loop through chunks matching chunkName
@@ -345,6 +372,7 @@ public:
             }
         }
         cout << "File assembly complete!" << endl;
+
     }
 
 
@@ -358,7 +386,7 @@ public:
  * @param str
  * @param length
  */
-    void reverse(char str[], int length) {
+ static void reverse(char str[], int length) {
         int start = 0;
         int end = length - 1;
         while (start < end) {
@@ -376,7 +404,7 @@ public:
  * @param base
  * @return
  */
-    char *itoa(int num, char *str, int base) {
+    static char *itoa(int num, char *str, int base) {
         int i = 0;
         bool isNegative = false;
 
@@ -420,7 +448,7 @@ public:
  * @param file
  * @return
  */
-    int getFileSize(ifstream *file) {
+    static int getFileSize(ifstream *file) {
         file->seekg(0,ios::end);
         int filesize = file->tellg();
         file->seekg(ios::beg);
@@ -433,7 +461,7 @@ public:
  * @param c
  * @return
  */
-    char XOR(char a, char b, char c){
+    static char XOR(char a, char b, char c){
     char d = a ^ b ^ c;
     return d;
     }
@@ -445,7 +473,7 @@ public:
  * @param chunk_size
  * @param particiones
  */
-    void reconstruir_archivo(string trozo, int carpeta, char* chunkName, int chunk_size, vector<char*> particiones){
+    static void reconstruir_archivo(string trozo, int carpeta, char* chunkName, int chunk_size, vector<char*> particiones){
         cout << "Se llamo a reconstruir_archivo para el trozo: "+(string)trozo+" en la carpeta (disco): "<< carpeta << "; particiones tiene un tamano de: " << particiones.size() << endl;
         char* paridad = new char[chunk_size];
         ofstream archivo;
@@ -462,6 +490,15 @@ public:
         }
         archivo.close();
         delete(paridad);
+    }
+
+    static void crear_archivo(string nombre, char* buffer, int tam){
+        ofstream prueba;
+        prueba.open("../tmp", ios::out | ios::trunc | ios::binary);
+        prueba.write(buffer,tam);
+        char* a = (char*)nombre.c_str();
+        write("../tmp",a);
+        prueba.close();
     }
 };
 

@@ -31,6 +31,21 @@ public:
 */
     nlohmann::json getJson();
 
+    /** @brief Json to file
+     * Cuando se va a escribir la metadata en archivos, esta no deberia contener algunos
+     * campos. Este metodo elimina esos campos para poder escribir bien.
+     * @returns Json que representa los datos de la clase
+     * @author Elorim
+     * */
+    nlohmann::json getJsonFile();
+
+    /** @brief Json vacio
+     * Retorna un Json vacio para efecto de errores.
+     * @returns Json vacio
+     * @author Elorim
+     * */
+     static nlohmann::json getEmptyJson();
+
     /**
       Este metodo estatico puede llamarse de cualquier lugar y retorna un objeto
       Metadata a partir de un json dado.
@@ -39,6 +54,12 @@ public:
       @author Elorim
 */
     static Metadata jsonParse(nlohmann::json jsonToParse);
+
+    /** @brief Json from file
+     * Cuando se va a leer de un archivo, este no contiene algunos campos. Este metodo
+     * prevee eso y llena esos campos que no deberian estar en un file.
+     * */
+    static Metadata jsonParseFile(nlohmann::json jsonToParse);
     // Atributos
    string nombre; /** El nombre de la imagen*/
    string galeria;  /** La galeria a la que pertenece la imagen*/
@@ -47,7 +68,7 @@ public:
    int size;  /** El tamaño de la imagen en bytes*/
    string descripcion;  /** La descripcion que se le da a la imagen*/
    string year;  /** El año de creacion de la imagen*/
-   string imagen;  /** La imagen en binario*/
+
    string mensaje; /** Cualquier mensaje adicional*/
    /**
      Protocolo del mensaje. Atributo utilizado en la comunicacion por sockets
@@ -58,7 +79,7 @@ public:
      3: Crear;
 */
    int protocolo;
-
+   vector<char> imagen;  /** La imagen en binario, maximo de 2 MB*/
 };
 
 #endif // METADATA_H
