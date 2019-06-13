@@ -46,7 +46,7 @@ string ClientSocket::receiveS()
 }
 
 std::string ClientSocket::specialReceive() {
-    char buffer[7000000] = {0};
-    read(sock, buffer, 7000000);
+    char buffer[1000000] = {0};
+    read(sock, buffer, 1000000);
     return buffer;
 }

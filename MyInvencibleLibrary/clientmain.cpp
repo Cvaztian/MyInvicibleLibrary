@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
     std::cout<<RestClient::respuesta;
     std::vector<char> alas = {'a','b','c'};
     nlohmann::json j = {
-        {"nombre","alas"},
+        {"nombre","alaasds"},
         {"galeria","misrecuerdos"},
         {"autor","Malapraxi"},
         {"descripcion","alalalala"},
@@ -73,11 +73,11 @@ int main(int argc, char* argv[])
     std::string jss = j.dump();
     const char* js = jss.c_str();
     //std::cout << js << std::flush;
-    //RestClient::Put(j);
+    RestClient::Put(j);
     //RestClient::Post(j.dump());
     //RestClient::Get(j.dump());
     //std::cout << RestClient::respuesta;
-    RestClient::Delete(j.dump());
+    //RestClient::Delete(j.dump());
     std::cout<<RestClient::respuesta;
 
     return 0;

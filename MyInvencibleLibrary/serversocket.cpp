@@ -104,7 +104,7 @@ std::string ServerSocket::specialReceive(std::string socket) {
     }else if(socket == "base"){
         socketnum = base;
     }
-    char buffer[7000000] = {0};
-    read(socketnum, buffer, 7000000);
+    char buffer[1000000] = {0};
+    read(socketnum, buffer, 1000000);
     return buffer;
 }

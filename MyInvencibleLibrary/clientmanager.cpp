@@ -23,13 +23,23 @@ ClientManager::ClientManager(string tipo)
 void ClientManager::mainloop()
 {
     string response ="";
+    json rsponse = "";
     while(response != "off"){
         cout<< "Esperando peticion...\n";
         response = sockets->specialReceive();
         cout<< "Peticion recibida\n";
-        cout<<response<<flush;
-        json rsponse =  json::parse(response);
-        Metadata metadataObj = Metadata::jsonParse(rsponse);
+        Metadata metadataObj;
+        try {
+            rsponse =  json::parse(response);
+            metadataObj = Metadata::jsonParse(rsponse); // Se cae cuando se desconecta el server
+        }catch (...){
+            cout <<"Señal del servidor perdida, apagando...";
+            if(tipo == "base"){
+                response = "off";
+                delete baseDatos;
+            }
+            return;
+        }
         switch(metadataObj.protocolo){
         case 0:
             cout<<"Protocolo 0: Get\n"<<flush;

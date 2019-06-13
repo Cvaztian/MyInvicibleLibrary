@@ -8,10 +8,10 @@ DBManager::DBManager()
     // y guardarlo en DBManager::id.
 
     // Primeramente lee el id del file
-    if(checkFile("lastid.txt",".")){
+    if(checkFile("lastid",".")){
         string data;
         ifstream infile;
-           infile.open("lastid.txt");
+           infile.open("lastid.json");
 
            infile >> data;  // Lee linea por linea
            DBManager::id = atoi(data.c_str());  // Establece el id
