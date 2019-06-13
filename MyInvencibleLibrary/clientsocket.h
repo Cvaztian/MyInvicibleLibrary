@@ -48,6 +48,12 @@ public:
      * @author Elorim
      * */
     std::string specialReceive();
+
+    /** @brief Enviar imagenes
+     * Este metodo implementa un handshake para asegurarse de que las imagenes lleguen bien.
+     * @param mensaje Mensaje a enviar
+     * */
+     void specialSend(string mensaje);
 private:
     string tipo; /** Guarda el tipo de cliente que es*/
     int sock; /** Socket del servidor*/

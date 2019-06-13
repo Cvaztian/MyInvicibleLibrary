@@ -100,7 +100,7 @@ string DBManager::Insert(json metadata)
         myfile.open (spath);  // Se puede especificar una carpeta, si existe, crea el archivo dentro, si no, no hace nada.
         myfile << metadataObj.getJsonFile();  // Esto crea un nuevo archivo y reescribe todo lo que hay en el
         myfile.close();
-        return "Success";
+        return to_string(metadataObj.id);
     }else{
         return "406";
     }

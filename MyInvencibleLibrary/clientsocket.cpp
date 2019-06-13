@@ -46,7 +46,30 @@ string ClientSocket::receiveS()
 }
 
 std::string ClientSocket::specialReceive() {
+    // Implementar handshake
+    int length = 0;
+    string bfs = "1";
     char buffer[1000000] = {0};
-    read(sock, buffer, 1000000);
-    return buffer;
+    while(length != bfs.size()){
+        length = std::atoi(receiveS().c_str());  // Lo primero que recibe es un
+        free(buffer);
+        char buffer[1000000] = {0};
+        read(sock, buffer, 1000000);
+        bfs = buffer;
+        if(length == bfs.size()){
+            sendS("true");
+        }else{
+            sendS("false");
+        }
+    }
+    return bfs;
+}
+
+void ClientSocket::specialSend(string mensaje) {
+    string ver = "false";
+    while(ver == "false"){
+        sendS(to_string(mensaje.size()));
+        sendS(mensaje);
+        ver = receiveS();
+    }
 }

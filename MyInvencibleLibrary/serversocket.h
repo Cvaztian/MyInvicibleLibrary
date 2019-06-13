@@ -49,6 +49,8 @@ public:
      * */
     std::string specialReceive(std::string socket);
 
+    void specialSend(std::string mensaje, std::string socket);
+
 private:
     int base;  /** Socket de la base de datos*/
     int raid; /** Socket del raid*/

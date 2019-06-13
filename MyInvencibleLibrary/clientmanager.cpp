@@ -154,15 +154,19 @@ void ClientManager::crear(json metadata)
      json response = {};
      //const char* sendd = metadata.dump().c_str();
      string success = "406";
-     Metadata metaObj = Metadata::jsonParseFile(metadata);
+     Metadata metaObj;
     if(tipo == "base"){
+        metaObj  = Metadata::jsonParseFile(metadata);
         success = baseDatos->Insert(metadata);
         if(success == "406"){
             metaObj.mensaje = "406";
+        }else{
+            metaObj.id = std::atoi(success.c_str());
         }
         response = metaObj.getJson().dump();
         sockets->sendS(response);
     }else{
+        metaObj = Metadata::jsonParse(metadata);
         char c[metaObj.imagen.size()];
         std::copy(metaObj.imagen.begin(), metaObj.imagen.end(), c);
         RAID::crear_archivo(to_string(metaObj.id), c, tam);
