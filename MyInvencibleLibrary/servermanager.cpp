@@ -208,8 +208,8 @@ void ServerManager::handle_put(http_request message)
     }
 
         // Escribe imagen
-        //sockets->sendS(response, "raid");
-        //response = nlohmann::json::parse(sockets->receiveS("base"));
+        sockets->sendS(response, "raid");
+        response = nlohmann::json::parse(sockets->receiveS("base"));
         responseObj = Metadata::jsonParse(response);
         if(responseObj.mensaje == "406"){ // Check for exceptions
         cout << "Error interno: Hay imagen en disco, pero no en base de datos.\n";

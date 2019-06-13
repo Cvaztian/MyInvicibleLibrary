@@ -11,6 +11,16 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread")
 
+FIND_PACKAGE(Qt5Core)
+FIND_PACKAGE(Qt5Gui)
+FIND_PACKAGE(Qt5Widgets)
+FIND_PACKAGE(Qt5PrintSupport REQUIRED)
+SET(CMAKE_AUTOUIC ON)
+SET(CMAKE_AUTOMOC ON)
+SET(CMAKE_INCLUDE_CURRENT_DIR ON)
+SET(Gladiators_SOURCES main.cpp mainwindow.cpp)
+SET(Gladiators_HEADERS mainwindow.h)
+SET(Gladiators_FORMS mainwindow.ui)
 
 add_executable(restserver
         mainP.cpp
@@ -41,6 +51,7 @@ add_executable(RAID mainP.cpp RAID.h
         clientsocket.h clientsocket.cpp
         metadata.h metadata.cpp
         )
+add_executable(Interfaz Interfaz.pro main.cpp mainwindow.cpp mainwindow.h mainwindow.ui restclient.cpp restclient.h metadata.h metadata.cpp)
 add_subdirectory(json)
 
 set(Casablanca_LIBRARIES "-lboost_system -lcrypto -lssl -lcpprest")
@@ -60,8 +71,9 @@ else(DBMS)
         target_link_libraries(ServerLib nlohmann_json::nlohmann_json ${Casablanca_LIBRARIES})
     target_link_libraries(RAID nlohmann_json::nlohmann_json)
             target_link_libraries(MetadataDB nlohmann_json::nlohmann_json)
-endif(DBMS)
+        target_link_libraries(Interfaz Qt5::Widgets Qt5::PrintSupport nlohmann_json::nlohmann_json ${Casablanca_LIBRARIES})
 
+endif(DBMS)
 
 
 
