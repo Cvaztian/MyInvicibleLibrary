@@ -42,7 +42,7 @@ add_executable(MetadataDB fiomain.cpp
     metadata.h metadata.cpp
     clientsocket.cpp clientsocket.h clientmanager.cpp
     clientmanager.h
-    )
+        Interprete.h)
     
 add_executable(RAID mainP.cpp RAID.h
         clientmanager.h clientmanager.cpp
@@ -52,6 +52,8 @@ add_executable(RAID mainP.cpp RAID.h
         metadata.h metadata.cpp
         )
 add_executable(Interfaz Interfaz.pro main.cpp mainwindow.cpp mainwindow.h mainwindow.ui restclient.cpp restclient.h metadata.h metadata.cpp)
+add_executable(Interprete InterpreteMain.cpp)
+
 add_subdirectory(json)
 
 set(Casablanca_LIBRARIES "-lboost_system -lcrypto -lssl -lcpprest")
