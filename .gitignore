@@ -13,14 +13,13 @@ Doxygen/html/
 
 Doxygen/latex/
 
-MyInvencibleLibrary/json/
+MyInvencibleLibrary/json
 
 MyInvencibleLibrary/\.idea/
 
 MyInvencibleLibrary/cmake-build-debug/
 
 MyInvencibleLibrary/RAID
-
 
 MyInvencibleLibrary/build-MyInvencibleLibrary-Desktop_Qt_5_12_1_GCC_64bit-Default/
 
@@ -49,8 +48,6 @@ MyInvencibleLibrary/RAID
 Doxygen/html/
 
 Doxygen/latex/
-
-MyInvencibleLibrary/json/
 
 MyInvencibleLibrary/\.idea/
 

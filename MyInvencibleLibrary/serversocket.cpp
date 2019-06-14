@@ -98,13 +98,42 @@ std::string ServerSocket::receiveS(std::string socket)
 }
 
 std::string ServerSocket::specialReceive(std::string socket) {
-    int socketnum =0;
-    if(socket == "raid"){
-        socketnum = raid;
-    }else if(socket == "base"){
-        socketnum = base;
-    }
+    // Implementar handshake
+    int length = 0;
+    std::string bfs = "1";
+    int suck;
     char buffer[1000000] = {0};
-    read(socketnum, buffer, 1000000);
-    return buffer;
+    while(length != bfs.size()){
+        length = std::atoi(receiveS(socket).c_str());  // Lo primero que recibe es un integer
+        free(buffer);
+        char buffer[1000000] = {0};
+        if(socket == "base"){
+            suck = base;
+        }else{
+            suck = raid;
+        }
+        read(suck, buffer, 1000000);
+        bfs = buffer;
+        if(length == bfs.size()){
+            sendS("true",socket);
+        }else{
+            sendS("false",socket);
+        }
+    }
+    return bfs;
+}
+
+void ServerSocket::specialSend(std::string mensaje, std::string socket) {
+    int suck;
+    if(socket == "base"){
+        suck = base;
+    }else{
+        suck = raid;
+    }
+    std::string ver = "false";
+    while(ver == "false"){
+        sendS(std::to_string(mensaje.size()), socket);
+        sendS(mensaje, socket);
+        ver = receiveS(socket);
+    }
 }

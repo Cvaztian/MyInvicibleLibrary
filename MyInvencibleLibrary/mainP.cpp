@@ -11,7 +11,7 @@ using namespace std;
 int main( int argc, char* argv[] )
 {
 RAID a;
-a.write("../image.jpg","1");
+//a.write("../image.jpg","1");
 ClientManager cliente = ClientManager("raid");
 vector<char> arr = {'a','l','c'};
     nlohmann::json j = {
