@@ -45,17 +45,36 @@ void ServerManager::handle_get(http_request message)
     pplx::task<utility::string_t> body_json = message.extract_string();
 
     string contenido = body_json.get();
+    string cs;
 
-    string galeria = Interprete::Interpretar(contenido);
-
-    string response;
+    try {
+        string galeria = Interprete::Interpretar(contenido);
+        string response;
 
     // Consiguiendo metadata
     Metadata responseObj = Metadata();
     responseObj.protocolo = 4; // Protocolo 4 es get all
     responseObj.galeria = galeria;
     sockets->specialSend(responseObj.getJson().dump(), "base");  // Pido las metadatas a la base de datos
-    response = nlohmann::json::parse(sockets->specialReceive("base")); // A este punto se tiene un json con array de jsons
+    cs = sockets->receiveS("base");
+    }catch(...){  // Se cae cuando no tiene la sintaxis
+        // Consiguiendo imagen
+        Metadata responseObj = Metadata();
+        responseObj.protocolo = 0;
+        responseObj.id = std::atoi(contenido.c_str());
+        sockets->specialSend(responseObj.getJson().dump(), "raid");  // Pido imagen
+        cs = sockets->specialReceive("raid");
+        if(responseObj.mensaje == "404") { // Check for exceptions
+            cout << "Error interno: Hay imagen en base de datos, pero no en disco.\n";
+            responseObj.mensaje = "Error, hay imagen en base de datos pero no en disco.\n";
+            returning = responseObj.getJson().dump();
+            message.reply(status_codes::InternalError, returning);
+            return;
+        }
+    }
+
+
+    //response = nlohmann::json::parse(cs); // A este punto se tiene un json con array de jsons
     /*
     responseObj = Metadata::jsonParseFile(response);
     if(responseObj.mensaje == "404"){ //Check for exceptions
@@ -69,22 +88,11 @@ void ServerManager::handle_get(http_request message)
 
 
 
-    // Consiguiendo imagen
-    responseObj.protocolo = 0;
-    sockets->specialSend(responseObj.getJson().dump(), "raid");  // Pido imagen
-    response = nlohmann::json::parse(sockets->specialReceive("raid")); // La recibo, se cae aca por la imagen
-    responseObj = Metadata::jsonParse(response);
-    if(responseObj.mensaje == "404"){ // Check for exceptions
-        cout << "Error interno: Hay imagen en base de datos, pero no en disco.\n";
-        responseObj.mensaje = "Error, hay imagen en base de datos pero no en disco.\n";
-        returning = responseObj.getJson().dump();
-        message.reply(status_codes::InternalError, returning);
-        return;
-    }*/
+    */
 
     // Devolviendo, a este punto response tiene todo lo necesario
     ucout <<  "Operacion exitosa." << endl;
-    message.reply(status_codes::OK,response);
+    message.reply(status_codes::OK,cs);
     //std::cout<<rep;
 };
 

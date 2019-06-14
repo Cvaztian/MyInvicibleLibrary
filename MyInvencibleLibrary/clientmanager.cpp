@@ -183,6 +183,6 @@ void ClientManager::crear(json metadata)
 
 json ClientManager::GetAll(json metadata) {
     json respuesta = baseDatos->SelectAll(metadata["galeria"]);  // Debe ser un json con array de jsons
-    sockets->specialSend(respuesta.dump());
+    sockets->sendS(respuesta.dump());
     return respuesta;
 }

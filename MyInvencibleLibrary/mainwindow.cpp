@@ -85,7 +85,11 @@ void MainWindow::on_visualizar_boton_clicked()
             {"year",""}
     };
     RestClient::Get("Select name from Pruebas");
-    cout << RestClient::respuesta;
+    cout << RestClient::respuesta << flush;
+    nlohmann::json ayay = nlohmann::json::parse(RestClient::respuesta);  // Al parecer llega bien
+    vector<nlohmann::json> prueba = ayay["array"];
+    nlohmann::json asd = prueba[0];
+    cout << asd["id"] << flush;
 }
 
 void MainWindow::on_modificar_boton_clicked()
