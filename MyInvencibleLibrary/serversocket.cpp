@@ -99,28 +99,30 @@ std::string ServerSocket::receiveS(std::string socket)
 
 std::string ServerSocket::specialReceive(std::string socket) {
     // Implementar handshake
-    int length = 0;
-    std::string bfs = "1";
-    int suck;
-    char buffer[1000000] = {0};
-    while(length != bfs.size()){
-        length = std::atoi(receiveS(socket).c_str());  // Lo primero que recibe es un integer
-        free(buffer);
-        char buffer[1000000] = {0};
-        if(socket == "base"){
-            suck = base;
-        }else{
-            suck = raid;
-        }
-        read(suck, buffer, 1000000);
-        bfs = buffer;
-        if(length == bfs.size()){
-            sendS("true",socket);
-        }else{
-            sendS("false",socket);
-        }
+    int socketnum;
+    if(socket == "raid"){
+        socketnum = raid;
+    }else{
+        socketnum = base;
     }
-    return bfs;
+    int length = std::atoi(receiveS(socket).c_str());  // Primero recibe el tamanno
+    std::string bfs;
+    char buffer[length];
+    for(int i = 0; i<length;i++){  // Inicializa el buffer en 0s
+        buffer[i] = 0;
+    }
+    bfs = buffer;
+    while(length != bfs.size()){
+        sendS("false",socket);  // Envia al remisor la sennal de que se recibio mal el mensaje
+        //free(buffer);   // Elimina el buffer pasado
+        char buffer[length];  // Inicia un nuevo buffer para guardar el nuevo mensaje
+        for(int i = 0; i<length;i++){  // Inicializa el buffer en 0s
+             buffer[i] = 0;
+        }
+        read(socketnum, buffer, length);  // Lee de nuevo
+        bfs = buffer;
+    }
+    return bfs;  // Deuvelve el mensaje cuando se recibe bien
 }
 
 void ServerSocket::specialSend(std::string mensaje, std::string socket) {
@@ -130,9 +132,9 @@ void ServerSocket::specialSend(std::string mensaje, std::string socket) {
     }else{
         suck = raid;
     }
-    std::string ver = "false";
+    sendS(std::to_string(mensaje.size()), socket);
+    std::string ver = receiveS(socket);
     while(ver == "false"){
-        sendS(std::to_string(mensaje.size()), socket);
         sendS(mensaje, socket);
         ver = receiveS(socket);
     }

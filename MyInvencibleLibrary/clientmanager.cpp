@@ -163,8 +163,8 @@ void ClientManager::crear(json metadata)
         }else{
             metaObj.id = std::atoi(success.c_str());
         }
-        response = metaObj.getJson().dump();
-        sockets->sendS(response);
+        response = metaObj.getJson();
+        sockets->sendS(response.dump());
     }else{
         metaObj = Metadata::jsonParse(metadata);
         char c[metaObj.imagen.size()];

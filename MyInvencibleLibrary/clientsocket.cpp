@@ -47,29 +47,32 @@ string ClientSocket::receiveS()
 
 std::string ClientSocket::specialReceive() {
     // Implementar handshake
-    int length = 0;
-    string bfs = "1";
-    char buffer[1000000] = {0};
-    while(length != bfs.size()){
-        length = std::atoi(receiveS().c_str());  // Lo primero que recibe es un
-        free(buffer);
-        char buffer[1000000] = {0};
-        read(sock, buffer, 1000000);
-        bfs = buffer;
-        if(length == bfs.size()){
-            sendS("true");
-        }else{
-            sendS("false");
-        }
+    string asa =receiveS();
+    int length = std::atoi(asa.c_str());  // Primero recibe el tamanno
+    string bfs;
+    char buffer[length];
+    for(int i = 0; i<length;i++){  // Inicializa el buffer en 0s
+        buffer[i] = 0;
     }
-    return bfs;
+    bfs = buffer;
+    while(length != bfs.size()){
+        sendS("false");  // Envia al remisor la sennal de que se recibio mal el mensaje
+        //free(buffer);   // Elimina el buffer pasado
+        char buffer[length];  // Inicia un nuevo buffer para guardar el nuevo mensaje
+        for(int i = 0; i<length;i++){  // Inicializa el buffer en 0s
+             buffer[i] = 0;
+        }
+        read(sock, buffer, length);  // Lee de nuevo
+        bfs = buffer;
+    }
+    return bfs;  // Deuvelve el mensaje cuando se recibe bien
 }
 
 void ClientSocket::specialSend(string mensaje) {
+    sendS(to_string(mensaje.size()));
     string ver = "false";
-    while(ver == "false"){
-        sendS(to_string(mensaje.size()));
-        sendS(mensaje);
-        ver = receiveS();
+    while(ver == "false"){  // Si se recibe mal
+        sendS(mensaje);  // Manda el mensaje de nuevo
+        ver = receiveS();  // Espera sennal
     }
 }

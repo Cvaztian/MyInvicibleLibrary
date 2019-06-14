@@ -196,7 +196,7 @@ void ServerManager::handle_put(http_request message)
     string enviar = responseObj.getJson().dump();
     nlohmann::json jsEnviar = responseObj.getJsonFile();
     jsEnviar["protocolo"]=3;
-    sockets->sendS(jsEnviar.dump(), "base");
+    sockets->specialSend(jsEnviar.dump(), "base");
     response = nlohmann::json::parse(sockets->receiveS("base"));
     responseObj = Metadata::jsonParseFile(response);
     if(responseObj.mensaje == "406"){ //Check for exceptions
@@ -211,8 +211,8 @@ void ServerManager::handle_put(http_request message)
         response["protocolo"] = 3;
     response["imagen"] = orasi["imagen"];
     string ayj = response.dump();
-        sockets->sendS(ayj, "raid");
-        response = nlohmann::json::parse(sockets->receiveS("base"));
+        sockets->specialSend(ayj, "raid");
+        response = nlohmann::json::parse(sockets->receiveS("raid"));
         responseObj = Metadata::jsonParse(response);
         if(responseObj.mensaje == "406"){ // Check for exceptions
         cout << "Error interno: Hay imagen en disco, pero no en base de datos.\n";
