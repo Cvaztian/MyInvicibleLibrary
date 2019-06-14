@@ -64,6 +64,15 @@ private:
 */
 
 
+   /** @brief Consigue todos los archivos de una galeria.
+    *
+    * Metodo necesario para la implementacion correcta del SELECT SQL.
+    * @param metadata Json tipo metadata con la galeria solicitada
+    * @returns Json con un array de jsons, donde cada json es de tipo metadata y representa
+    * la metadata de una imagen.
+    * */
+    json GetAll(json metadata);
+
     string tipo; /** Tipo de cliente*/
     DBManager* baseDatos;  /** La base de datos*/
 

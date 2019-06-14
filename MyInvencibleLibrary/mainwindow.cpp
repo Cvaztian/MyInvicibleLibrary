@@ -84,7 +84,7 @@ void MainWindow::on_visualizar_boton_clicked()
             {"id",-1},
             {"year",""}
     };
-    RestClient::Get(sendable.dump());
+    RestClient::Get("Select name from Pruebas");
     cout << RestClient::respuesta;
 }
 

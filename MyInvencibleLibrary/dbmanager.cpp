@@ -51,6 +51,48 @@ json DBManager::Select(string galeria, string nombre)
     }
 }
 
+
+json DBManager::SelectAll(string galeria) {
+
+    std::vector<json> responseV = std::vector<json>();
+    std::string path = galeria + "/";
+
+    std::string nombre;
+
+    DIR *dir;
+    struct dirent *ent;
+
+    if ((dir = opendir ("Pruebas/")) != NULL) {
+        /* print all the files and directories within directory */
+        while ((ent = readdir (dir)) != NULL) {  // Mientras que hayan directorios
+            printf ("%s\n", ent->d_name);
+            if(strncmp(ent->d_name,".",1)==0 || strncmp(ent->d_name,"..",2)==0){
+                // Dont show
+            }else{
+                nombre = "";
+                for(char &c : ent->d_name){
+                    if(c != 46){  // Si el caracter no es un punto
+                        nombre +=c;
+                    }else{
+                        break;
+                    }
+                }
+                responseV.push_back(Select(galeria, nombre));
+            }
+        }
+        closedir (dir);
+    } else {
+        /* could not open directory */
+        perror ("");
+        return EXIT_FAILURE;
+    }
+
+    // Ya aqui tengo el array con jsons
+    json responseJ = {{"array",responseV}};
+    return responseJ;
+}
+
+
 string DBManager::Update(json metadata)
 {
     Metadata metadataObj = Metadata::jsonParse(metadata);
