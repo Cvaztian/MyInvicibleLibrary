@@ -96,7 +96,7 @@ json ClientManager::Get(json metadata)
         prueba.close();*/
 
         response = metaObj.getJson();
-        sockets->sendS(response.dump());
+        sockets->specialSend(response.dump());
     }
     return response;
 
@@ -130,6 +130,8 @@ void ClientManager::eliminar(json metadata)
         success = baseDatos->Delete(metaObj.galeria, metaObj.nombre);
         if(success=="404"){
             metaObj.mensaje = "404";
+        }else{
+            metaObj.id = std::atoi(success.c_str());
         }
         response = metaObj.getJson();
         sockets->sendS(response.dump());
@@ -169,7 +171,8 @@ void ClientManager::crear(json metadata)
         metaObj = Metadata::jsonParse(metadata);
         char c[metaObj.imagen.size()];
         std::copy(metaObj.imagen.begin(), metaObj.imagen.end(), c);
-        RAID::crear_archivo(to_string(metaObj.id), c, tam);
+        RAID::crear_archivo(to_string(metaObj.id), c, metaObj.imagen.size());
+        sockets->sendS(metaObj.getJsonFile().dump());
     }
 
 }

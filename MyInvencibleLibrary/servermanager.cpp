@@ -43,7 +43,7 @@ void ServerManager::handle_get(http_request message)
 
     // Consiguiendo metadata
     responseObj.protocolo = 0; // Protocolo 0 es get
-    sockets->sendS(responseObj.getJson().dump(), "base");  // Pido la metadata a la base de datos
+    sockets->specialSend(responseObj.getJson().dump(), "base");  // Pido la metadata a la base de datos
     response = nlohmann::json::parse(sockets->receiveS("base")); // La recibo
     responseObj = Metadata::jsonParseFile(response);
     if(responseObj.mensaje == "404"){ //Check for exceptions
@@ -53,10 +53,9 @@ void ServerManager::handle_get(http_request message)
         message.reply(status_codes::NotFound,returning);
         return;
     }
-
     // Consiguiendo imagen
     responseObj.protocolo = 0;
-    sockets->sendS(responseObj.getJson().dump(), "raid");  // Pido imagen
+    sockets->specialSend(responseObj.getJson().dump(), "raid");  // Pido imagen
     response = nlohmann::json::parse(sockets->specialReceive("raid")); // La recibo, se cae aca por la imagen
     responseObj = Metadata::jsonParse(response);
     if(responseObj.mensaje == "404"){ // Check for exceptions
@@ -90,7 +89,7 @@ void ServerManager::handle_post(http_request message)
 
     // Sobreescribiendo metadata
     responseObj.protocolo = 1; // Protocolo 1: Actualizar
-    sockets->sendS(responseObj.getJson().dump(), "base");
+    sockets->specialSend(responseObj.getJson().dump(), "base");
     response = nlohmann::json::parse(sockets->receiveS("base"));
     responseObj = Metadata::jsonParseFile(response);
     if(responseObj.mensaje == "404"){ //Check for exceptions
@@ -100,20 +99,6 @@ void ServerManager::handle_post(http_request message)
         message.reply(status_codes::NotFound,returning);
         return;
     }
-    /* Sobreescritura de imagen
-    if(responseObj.imagen.size() > 0){  // Si el usuario quiere sobreescribir imagen...
-        // Sobreescribe imagen
-        sockets->sendS(response.dump(), "raid");
-        response = nlohmann::json::parse(sockets->receiveS("base"));
-        responseObj = Metadata::jsonParse(response);
-        if(responseObj.mensaje == "404"){ // Check for exceptions
-        cout << "Error interno: Hay imagen en base de datos, pero no en disco.\n";
-        responseObj.mensaje = "Error, hay imagen en base de datos pero no en disco.\n";
-        returning = responseObj.getJson().dump();
-        message.reply(status_codes::InternalError, returning);
-        return;
-    }
-    }*/
     responseObj.mensaje = "Succesful";
     returning = responseObj.getJson().dump();
     ucout <<  "Actualizacion exitosa." << endl;
@@ -137,7 +122,7 @@ void ServerManager::handle_delete(http_request message)
 
     // Elimina metadata
     responseObj.protocolo = 2; // Protocolo 2: Eliminar
-    sockets->sendS(responseObj.getJson().dump(), "base");
+    sockets->specialSend(responseObj.getJson().dump(), "base");
     string ayy = sockets->receiveS("base");
     response = nlohmann::json::parse(ayy);
     cout << response["galeria"];
@@ -149,9 +134,9 @@ void ServerManager::handle_delete(http_request message)
         message.reply(status_codes::NotFound,returning);
         return;
     }
-
+    response["protocolo"] = 2;
         // Elimina imagen
-        sockets->sendS(response.dump(), "raid");
+        sockets->specialSend(response.dump(), "raid");
         response = nlohmann::json::parse(sockets->receiveS("raid"));
         responseObj = Metadata::jsonParse(response);
         if(responseObj.mensaje == "404"){ // Check for exceptions
@@ -166,7 +151,7 @@ void ServerManager::handle_delete(http_request message)
     returning = responseObj.getJson().dump();
     ucout <<  "Eliminacion exitosa." << endl;
     message.reply(status_codes::OK,returning);
-    return ;
+    return;
 };
 
 
@@ -198,11 +183,11 @@ void ServerManager::handle_put(http_request message)
     jsEnviar["protocolo"]=3;
     sockets->specialSend(jsEnviar.dump(), "base");
     response = nlohmann::json::parse(sockets->receiveS("base"));
-    responseObj = Metadata::jsonParseFile(response);
+    responseObj = Metadata::jsonParse(response);
     if(responseObj.mensaje == "406"){ //Check for exceptions
         cout << "Already in database\n";
         responseObj.mensaje = "La imagen ya existe";
-        returning = responseObj.getJson();
+        returning = responseObj.getJson().dump();
         message.reply(status_codes::NotAcceptable,returning);
         return;
     }

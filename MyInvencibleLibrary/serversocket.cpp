@@ -107,21 +107,22 @@ std::string ServerSocket::specialReceive(std::string socket) {
     }
     int length = std::atoi(receiveS(socket).c_str());  // Primero recibe el tamanno
     std::string bfs;
-    char buffer[length];
-    for(int i = 0; i<length;i++){  // Inicializa el buffer en 0s
+    char buffer[length+2];
+    for(int i = 0; i<length+2;i++){  // Inicializa el buffer en 0s
         buffer[i] = 0;
     }
     bfs = buffer;
     while(length != bfs.size()){
         sendS("false",socket);  // Envia al remisor la sennal de que se recibio mal el mensaje
         //free(buffer);   // Elimina el buffer pasado
-        char buffer[length];  // Inicia un nuevo buffer para guardar el nuevo mensaje
-        for(int i = 0; i<length;i++){  // Inicializa el buffer en 0s
+        char buffer[length+2];  // Inicia un nuevo buffer para guardar el nuevo mensaje
+        for(int i = 0; i<length+2;i++){  // Inicializa el buffer en 0s
              buffer[i] = 0;
         }
         read(socketnum, buffer, length);  // Lee de nuevo
         bfs = buffer;
     }
+    sendS("true", socket);
     return bfs;  // Deuvelve el mensaje cuando se recibe bien
 }
 
@@ -133,9 +134,10 @@ void ServerSocket::specialSend(std::string mensaje, std::string socket) {
         suck = raid;
     }
     sendS(std::to_string(mensaje.size()), socket);
-    std::string ver = receiveS(socket);
+    sendS(mensaje,socket);
+    /*std::string ver = receiveS(socket);
     while(ver == "false"){
         sendS(mensaje, socket);
         ver = receiveS(socket);
-    }
+    }*/
 }

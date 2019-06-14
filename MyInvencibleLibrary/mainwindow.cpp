@@ -72,7 +72,20 @@ void MainWindow::on_insertar_boton_clicked()
 
 void MainWindow::on_visualizar_boton_clicked()
 {
-
+    nlohmann::json sendable = {
+            {"imagen",std::vector<char>()},
+            {"size",-1},
+            {"mensaje",""},
+            {"protocolo",-1},
+            {"nombre",get_visualizar_nombre()},
+            {"autor",""},
+            {"descripcion",""},
+            {"galeria",get_visualizar_galeria()},
+            {"id",-1},
+            {"year",""}
+    };
+    RestClient::Get(sendable.dump());
+    cout << RestClient::respuesta;
 }
 
 void MainWindow::on_modificar_boton_clicked()
@@ -82,7 +95,20 @@ void MainWindow::on_modificar_boton_clicked()
 
 void MainWindow::on_modificar_cargar_clicked()
 {
-
+    nlohmann::json sendable = {
+            {"imagen",std::vector<char>()},
+            {"size",-1},
+            {"mensaje",""},
+            {"protocolo",-1},
+            {"nombre",get_modificar_nombre()},
+            {"autor",""},
+            {"descripcion",""},
+            {"galeria",get_modificar_galeria()},
+            {"id",-1},
+            {"year",""}
+    };
+    RestClient::Get(sendable.dump());
+    cout << RestClient::respuesta;
 }
 
 void MainWindow::on_eliminar_boton_clicked()
@@ -92,6 +118,20 @@ void MainWindow::on_eliminar_boton_clicked()
 
 void MainWindow::on_eliminar_cargar_clicked()
 {
+    nlohmann::json sendable = {
+            {"imagen",std::vector<char>()},
+            {"size",-1},
+            {"mensaje",""},
+            {"protocolo",-1},
+            {"nombre",get_eliminar_nombre()},
+            {"autor",""},
+            {"descripcion",""},
+            {"galeria",get_eliminar_galeria()},
+            {"id",-1},
+            {"year",""}
+    };
+    RestClient::Delete(sendable.dump());
+    cout << RestClient::respuesta;
 
 }
 
