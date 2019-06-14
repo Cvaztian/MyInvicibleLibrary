@@ -27,7 +27,14 @@ void ServerManager::handle_error(pplx::task<void>& t)
 
 //
 // Get Request
-//
+/* Antes: Llega json, llamo a base de datos, recibo una sola metadata, luego llamo a RAID
+ * para adjuntar la imagen a la metadata que recibi y devuelvo al cliente esta respuesta.
+ * Ahora: LLega sintaxis SQL, interpreto, llamo a getAll de base de datos con parametro galeria
+ * recibo un json con un array de jsons, todos en su forma de string, devuelvo este array al
+ * cliente.
+ * O
+ * Llega ID de imagen, llamo a RAID para conseguir la imagen de ese ID, me retorna la imagen
+ * y devuelvo al cliente.*/
 void ServerManager::handle_get(http_request message)
 {
     ucout << "Operacion get\n";
@@ -38,13 +45,19 @@ void ServerManager::handle_get(http_request message)
     pplx::task<utility::string_t> body_json = message.extract_string();
 
     string contenido = body_json.get();
-    nlohmann::json response = nlohmann::json::parse(contenido); // Convierto a json
-    Metadata responseObj = Metadata::jsonParse(response);  // Objeto metadata
+
+    string galeria = Interprete::Interpretar(contenido);
+
+    string response;
 
     // Consiguiendo metadata
-    responseObj.protocolo = 0; // Protocolo 0 es get
-    sockets->specialSend(responseObj.getJson().dump(), "base");  // Pido la metadata a la base de datos
-    response = nlohmann::json::parse(sockets->receiveS("base")); // La recibo
+    Metadata responseObj = Metadata();
+    responseObj.protocolo = 5; // Protocolo 5 es get all
+    sockets->specialSend(responseObj.getJson().dump(), "base");  // Pido las metadatas a la base de datos
+    response = nlohmann::json::parse(sockets->receiveS("base")); // A este punto se tiene un json con array de jsons
+
+
+    /*
     responseObj = Metadata::jsonParseFile(response);
     if(responseObj.mensaje == "404"){ //Check for exceptions
         cout << "Not found\n";
@@ -53,6 +66,10 @@ void ServerManager::handle_get(http_request message)
         message.reply(status_codes::NotFound,returning);
         return;
     }
+
+
+
+
     // Consiguiendo imagen
     responseObj.protocolo = 0;
     sockets->specialSend(responseObj.getJson().dump(), "raid");  // Pido imagen
@@ -70,7 +87,7 @@ void ServerManager::handle_get(http_request message)
     ucout <<  "Operacion exitosa." << endl;
     returning = response.dump();
     message.reply(status_codes::OK,returning);
-    //std::cout<<rep;
+    //std::cout<<rep;*/
 };
 
 //

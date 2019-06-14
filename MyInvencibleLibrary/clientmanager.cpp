@@ -57,6 +57,10 @@ void ClientManager::mainloop()
             cout << "Protocolo 3: Crear\n"<<flush;
             crear(rsponse);
             break;
+        case 4:
+            cout<< "Protocolo 4: Get All\n" << flush;
+            GetAll(rsponse);
+            break;
         }
     }
 }
@@ -175,4 +179,9 @@ void ClientManager::crear(json metadata)
         sockets->sendS(metaObj.getJsonFile().dump());
     }
 
+}
+
+json ClientManager::GetAll(json metadata) {
+    json respuesta = baseDatos->SelectAll(metadata["galeria"]);  // Debe ser un json con array de jsons
+    return nlohmann::json();
 }

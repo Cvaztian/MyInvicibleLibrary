@@ -2,6 +2,12 @@
 // Created by kevin on 14/06/19.
 //
 
+#include <string>
+#include <cstring>
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
 #ifndef MYINVENCIBLELIBRARY_INTERPRETE_H
 #define MYINVENCIBLELIBRARY_INTERPRETE_H
 
@@ -50,9 +56,113 @@
  * server le pide a la base de datos todos los campos en la galeria table. Seguidamente se encarga de filtrar mediante
  * la condicion los json y retorna un array de jsons por cada json que paso la condicion. Si la condicion no es especificada
  * retorna todos los jsons de la galeria.
+ *
+ * @date 13/06/2019
+ * @author Elorim
  * */
 class Interprete{
-    
+public:
+
+    /** @brief Interpreta una sintaxis SQL.
+     *
+     * Este metodo se encarga de interpretar una sintaxis SQL y de llamar a los metodos
+     * necesarios para llevar a cabo la solicitud. Retorna un string o un json en su forma
+     * de string, es trabajo del que llama distinguir entre ambos.
+     * @param syntax Sintaxis que se quiere interpretar
+     * @return String que contiene un json o un mensaje.
+     * @throws Excepcion si la sintaxis no tiene el formato definido de SQL
+     * */
+    static string Interpretar(string syntax){
+        string method = "";
+        int i = 0;
+        for(char& c : syntax){
+            cout << c;
+            if(c != 32){  // 32 es espacio
+                method += c;
+            }else if(c == 32){
+                transform(method.begin(), method.end(), method.begin(), ::tolower);  // Pasa lo que sea que tenga method a lower case
+                if(strncmp("select", method.c_str(), 6) ==0){
+                    return Select(syntax);
+                }else if(strncmp("insert", method.c_str(), 6) == 0){
+                    // Insert
+                }else if(strncmp("update", method.c_str(), 6) == 0){
+                    // Update
+                }else if(strncmp("delete", method.c_str(), 6) == 0){
+                    // Delete
+                }else {
+                    throw "SQL: Error de sintaxis.";
+                }
+            }
+        }
+    };
+
+    /** @brief Metodo SELECT SQL.
+     *
+     * Este metodo se ejecuta cuando la primera palabra de la sintaxis coincide con SELECT.
+     * Se encarga de mimetizar el metodo SELECT que existe en SQL.
+     * @param syntax Sintaxis de SQL.
+     * @returns json con un array de Jsons, correspondientes a las metadatas de la galeria espe
+     * cificada.
+     * @throws Excepcion si no hay una sintaxis adecuada.
+     * */
+    static string Select(string syntax){
+        bool methodB = false;
+        bool fromB = false;
+        bool galeriaB = false;
+        bool whereB = false;
+        bool condB = false;
+        bool dataB = false;
+        string where = "";
+        string from = "";
+        string galeria = "";
+        string condicion = "";
+
+        for(char&c : syntax){
+            if(!methodB && !dataB && c == 32){  // Itera sin hacer nada hasta que encuentra el primer espacio
+                methodB = true;  // Al encontrarlo, methodB = true
+            }else if(methodB && !dataB && c == 32 ){
+                dataB = true;
+            }else if(dataB && methodB && !fromB && c != 32){  // Buscando FROM
+                from += c;
+            }else if(dataB && methodB && !fromB && c == 32){  // Segundo espacio, ya deberia existir FROM
+                transform(from.begin(), from.end(), from.begin(), ::tolower);
+                if(strncmp(from.c_str(), "from",4) == 0){  // Si lo que hay entre espacios es FROM
+                    fromB = true;
+                }else{  // Si no...
+                    throw "SQL: Error de sintaxis";
+                }
+            }else if(dataB && methodB && fromB && !galeriaB && c !=32){ // Buscando galeria
+                galeria += c;
+            }else if(dataB && methodB && fromB && !galeriaB && c == 32){  // Tercer espacio, ya deberia haber galeria
+                galeriaB = true;
+            }else if(dataB && methodB && fromB && galeriaB && !whereB && c != 32){  // Busca where
+                where += c;
+            }else if(dataB && methodB && fromB && galeriaB && !whereB && c == 32){ //  Cuarto espacio, deberia haber where
+                transform(where.begin(), where.end(), where.begin(), ::tolower);
+                if(strncmp(where.c_str(), "where",5) == 0){  // Si lo que hay entre espacios es WHERE
+                    whereB = true;
+                }else{  // Si no...
+                    throw "SQL: Error de sintaxis";
+                }
+            }else if(dataB && methodB && fromB && galeriaB && whereB && !condB && c != 32){  // Busca la condicion
+                condicion += c;
+            }else if(dataB && methodB && fromB && galeriaB && whereB && !condB && c ==32){  // Quinto espacio, debe haber condicion
+                condB = true;
+            }
+        }
+        if(from.empty() && galeria.empty()){  // Si no se especifico galeria o FROM...
+            throw "SQL: Error de sintaxis";
+        }
+        cout << "La galeria es: " << galeria << flush;
+
+        // A este punto existe la galeria
+        return galeria;
+
+        /*
+        if(!where.empty() && !condicion.empty()){  // si hay WHERE y la condicion no es vacio
+            cout << "La condicion es " << condicion;
+        }*/
+    };
 };
 
 #endif //MYINVENCIBLELIBRARY_INTERPRETE_H

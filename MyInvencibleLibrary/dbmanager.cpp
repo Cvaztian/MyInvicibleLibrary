@@ -51,6 +51,15 @@ json DBManager::Select(string galeria, string nombre)
     }
 }
 
+
+json DBManager::SelectAll(string galeria) {
+
+    std::vector<json> response = std::vector<json>();
+    std::string path = galeria + "/";
+
+}
+
+
 string DBManager::Update(json metadata)
 {
     Metadata metadataObj = Metadata::jsonParse(metadata);

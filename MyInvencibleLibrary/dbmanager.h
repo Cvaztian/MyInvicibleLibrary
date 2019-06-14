@@ -42,6 +42,13 @@ public:
 */
     json Select(string galeria, string nombre);
 
+    /** @brief Devuelve las metadatas de toda una galeria
+     * Metodo necesario para la correcta implentacion del SELECT SQL.
+     * @param galeria
+     * @return Un json con un array de jsons en su forma de string.
+     * */
+     json SelectAll(string galeria);
+
     /** @brief Actualiza la metadata especificada
      * Metodo analogo a update de SQL, dada una metadata, extrae el nombre
      * y la galeria y sobreescribe el archivo encontrado. De no existir el
