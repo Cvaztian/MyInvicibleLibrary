@@ -89,7 +89,7 @@ string DBManager::Insert(json metadata)
         myfile.open (spath.c_str());  // Se puede especificar una carpeta, si existe, crea el archivo dentro, si no, no hace nada.
         myfile << metadataObj.getJsonFile();  // Esto crea un nuevo archivo y reescribe todo lo que hay en el
         myfile.close();
-        return "Success";
+        return to_string(nid);
     }else if(checkGalery(metadataObj.galeria) && !checkFile(metadataObj.nombre, metadataObj.galeria)){
         // Crea file
         int nid = DBManager::id;  // Id del archivo
@@ -109,10 +109,12 @@ string DBManager::Insert(json metadata)
 string DBManager::Delete(string galeria, string nombre)
 {
     if(checkGalery(galeria) && checkFile(nombre, galeria)){
+        json idJ = Select(galeria, nombre);
+        int id = idJ["id"];
         string spath = galeria + "/" + nombre+".json";
         const char* path = spath.c_str();
         remove(path);
-        return "Success";
+        return to_string(id);
     }else{
         return "404";
     }
