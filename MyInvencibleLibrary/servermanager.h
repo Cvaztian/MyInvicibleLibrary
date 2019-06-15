@@ -101,6 +101,8 @@ private:
 */
     void handle_error(pplx::task<void>& t);
 
+    bool is_number(const std::string& s);
+
     http_listener m_listener; /** El listener de las solicitudes http*/
 };
 

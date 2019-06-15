@@ -121,7 +121,7 @@ std::string ServerSocket::specialReceive(std::string socket) {
              buffer[i] = 0;
         }
         read(socketnum, buffer, length);  // Lee de nuevo
-        bfs = buffer;
+        bfs += buffer;
     }
     //sendS("true", socket);
     return bfs;  // Deuvelve el mensaje cuando se recibe bien

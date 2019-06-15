@@ -47,8 +47,10 @@ void ServerManager::handle_get(http_request message)
     string contenido = body_json.get();
     string cs;
 
-    try {
-        string galeria = Interprete::Interpretar(contenido);
+    if(!is_number(contenido)){
+        pair<string,string> interpretacion = Interprete::Interpretar(contenido);
+        string galeria = interpretacion.first;
+        string cond = interpretacion.second;
         string response;
 
     // Consiguiendo metadata
@@ -57,7 +59,17 @@ void ServerManager::handle_get(http_request message)
     responseObj.galeria = galeria;
     sockets->specialSend(responseObj.getJson().dump(), "base");  // Pido las metadatas a la base de datos
     cs = sockets->receiveS("base");
-    }catch(...){  // Se cae cuando no tiene la sintaxis
+
+
+
+    if(!cond.empty()){  // si hay condiciones
+        std::vector<nlohmann::json> jsnVecCnd = Interprete::Cond(nlohmann::json::parse(cs), cond);
+        nlohmann::json jsnCnd = {{"array",jsnVecCnd}};
+        cs = jsnCnd.dump();
+    }
+
+
+    }else{
         // Consiguiendo imagen
         Metadata responseObj = Metadata();
         responseObj.protocolo = 0;
@@ -236,4 +248,10 @@ void ServerManager::handle_put(http_request message)
     message.reply(status_codes::OK,returning);
     return ;
 
+}
+
+bool ServerManager::is_number(const std::string& s)
+{
+    return !s.empty() && std::find_if(s.begin(),
+                                      s.end(), [](char c) { return !std::isdigit(c); }) == s.end();
 }
