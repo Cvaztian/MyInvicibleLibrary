@@ -404,9 +404,6 @@ private:
                                                          if(syntaxC[i]!=44){ // Mientras no sea una coma
                                                              if(syntaxC[i]==32){ // Si es un espacio
                                                                  stop = true;  // Ya no hay mas
-                                                                 entry.second = "";
-                                                                 entry.second = val;
-                                                                 mapa.push_back(entry);
                                                                  break;
                                                              }else{
                                                                  val+=syntaxC[i];
@@ -418,7 +415,10 @@ private:
                                                              break;
                                                          }
                                                      }
-                                                     if(stop){  // Rompe el ciclo
+                                                     if(stop || i == tam){  // Rompe el ciclo
+                                                         entry.second = "";
+                                                         entry.second = val;
+                                                         mapa.push_back(entry);
                                                          break;
                                                      }
                                                  }
@@ -465,10 +465,10 @@ private:
          std::vector<nlohmann::json> jsonArrV = jsonArrJ["array"];
          for(nlohmann::json lineaJ:jsonArrV){
              for(pair<string, string> elemento:mapa){
-                 lineaJ[elemento.first] = lineaJ[elemento.second];
+                 lineaJ[elemento.first] = elemento.second;
              }
              string fak1 = lineaJ.dump();
-             RestClient::Delete(fak1);
+             RestClient::Post(fak1);
          }
          return pair<string,string>("Exito","");
 

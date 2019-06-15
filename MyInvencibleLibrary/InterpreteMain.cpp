@@ -20,6 +20,6 @@ int main(){
     //cout << pruebaL.getElemento(1)->getData().getElemento(0)->getData() <<flush;
 
     /* Pruebas de insert */
-    string nuevo = Interprete::Interpretar("UPDATE Pruebas SET autor=Kevin,descripcion=Ay").first;
+    string nuevo = Interprete::Interpretar("UPDATE Pruebas SET autor=Kevi,descripcion=Ay WHERE id!=3").first;
     return 0;
 }
