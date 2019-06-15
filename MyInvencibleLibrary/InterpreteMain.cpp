@@ -1,6 +1,6 @@
 #include "Interprete.h"
 #include <string>
-#include "dbmanager.h"
+//#include "dbmanager.h"
 #include "LinkedList.h"
 
 
@@ -10,16 +10,16 @@ int main(){
 //    manager.SelectAll("Pruebas");
 
 
-    json js = {{"galeria","ay"},
+    nlohmann::json js = {{"galeria","ay"},
                {"descripcion","aija"},
                {"nombre","kevin"}};
-    vector<json> prueba = vector<json>();
+    vector<nlohmann::json> prueba = vector<nlohmann::json>();
     prueba.push_back(js);
-    json pruebaJ = {{"array",prueba}};
+    nlohmann::json pruebaJ = {{"array",prueba}};
     //LinkedList<LinkedList<string>> pruebaL = Interprete::getCampos(pruebaJ, "select nombre from kk");
     //cout << pruebaL.getElemento(1)->getData().getElemento(0)->getData() <<flush;
 
     /* Pruebas de insert */
-    string nuevo = Interprete::Interpretar("INSERT INTO Pruebas (nombre,galeria) VALUES (Kevin,Pruebas)").first;
+    string nuevo = Interprete::Interpretar("UPDATE Pruebas SET autor=Kevin,descripcion=Ay").first;
     return 0;
 }

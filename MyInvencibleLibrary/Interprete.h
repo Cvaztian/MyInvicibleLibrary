@@ -9,6 +9,7 @@
 #include "LinkedList.h"
 #include "nlohmann/json.hpp"
 #include <vector>
+#include "restclient.h"
 
 using namespace std;
 using namespace nlohmann;
@@ -90,9 +91,9 @@ public:
                 }else if(strncmp("insert", method.c_str(), 6) == 0){
                     return Insert(syntax);
                 }else if(strncmp("update", method.c_str(), 6) == 0){
-                    // Update
+                    return Update(syntax);
                 }else if(strncmp("delete", method.c_str(), 6) == 0){
-                    // Delete
+                    return Delete(syntax);
                 }else {
                     throw "SQL: Error de sintaxis.";
                 }
@@ -319,7 +320,7 @@ public:
 
          // Interpretado
          for(int i =0;i<lineasV.size();i++){  // por cada linea
-             json linea = lineasV[i];
+             nlohmann::json linea = lineasV[i];
              LinkedList<string> lineaL = LinkedList<string>();  // Lista de la linea
              for(int j =0;j<columnas.getSize();j++){  // Por cada columna qu ese debe mostrar
                  try {
@@ -336,6 +337,239 @@ public:
          return respuesta;
      };
 private:
+    /** @brief Metodo Update SQL.
+     *
+     * Se ejecuta cuando la primera palabra de la sintaxis coincide con Delete.
+     * Se encarga de mimetizar el metodo INSERT que exite en SQL.
+     * La sintaxis debe ser la siguiente:
+     * UPDATE table SET col1=val1, col2=val2, ... WHERE cond
+     * De no indicarse condicion se elimina to do lo de la tabla.
+     *
+     * @param syntax Sintaxis de SQL
+     * @returns exito de la ejecucion
+     * @throws Excepcion si hay error de sintaxis
+     * */
+     static pair<string, string> Update(string syntax){
+         const char* syntaxC = syntax.c_str();
+         bool ignore = true; // Ignora los primeros espacios
+         int tam = syntax.size();
+         bool stop = false;
+         string gal;
+         string set;
+         vector<pair<string, string>> mapa;
+         pair<string, string> entry;
+         string col;
+         string val;
+         string where;
+         string cond;
+
+         for(int i =0;i<tam;i++){
+             if(syntaxC[i] != 32){
+                 ignore = false;  // Llega a la primera letra
+             }else if(!ignore){ // Llega al primer espacio
+                 i++; // pasa el espacio
+                 ignore = true;
+                 for(i;i<tam;i++){
+                     if(syntaxC[i] != 32){
+                         gal+=syntaxC[i];
+                         ignore = false;
+                     }else if(!ignore){ // Llega al segundo espacio, tiene galeria
+                         i++; // pasa el espacio
+                         ignore = true;
+                         for(i;i<tam;i++){
+                             if(syntaxC[i]!=32){
+                                 set += syntaxC[i];
+                                 ignore = false;
+                             }else if(!ignore){
+                                 transform(set.begin(), set.end(), set.begin(), ::tolower);
+                                 if(set == "set"){
+                                     i++; // Pasa el espacio
+                                     ignore = true;
+                                     for(i;i<tam;i++){
+                                         if(syntaxC[i]!=32){
+                                             // Encuentra la primera igualdad
+                                             for(i;i<tam;i++){  // Busca la columna
+                                                 if(syntaxC[i]!=61){  // Mientras sea distinto de un igual
+                                                     if(syntaxC[i]==32){  // Si es un espacio
+                                                         throw "SQL:Syntax error";
+                                                     }else{
+                                                         col+=syntaxC[i];
+                                                     }
+                                                 }else{
+                                                     i++;
+                                                     entry.first = col;
+                                                     col = "";
+                                                     val = "";
+                                                     for(i;i<tam;i++){  // Busca el valor
+                                                         if(syntaxC[i]!=44){ // Mientras no sea una coma
+                                                             if(syntaxC[i]==32){ // Si es un espacio
+                                                                 stop = true;  // Ya no hay mas
+                                                                 entry.second = "";
+                                                                 entry.second = val;
+                                                                 mapa.push_back(entry);
+                                                                 break;
+                                                             }else{
+                                                                 val+=syntaxC[i];
+                                                             }
+                                                         }else{
+                                                             entry.second = "";
+                                                             entry.second = val;
+                                                             mapa.push_back(entry);
+                                                             break;
+                                                         }
+                                                     }
+                                                     if(stop){  // Rompe el ciclo
+                                                         break;
+                                                     }
+                                                 }
+                                             }
+                                             // Ahora busca la condicion
+                                             ignore = true;
+                                             i++;
+                                             for(i;i<tam;i++){  // Lo que quede es la condicion
+                                                 cond += syntaxC[i];
+                                             }
+                                         }
+                                     }
+                                 }else{
+                                     throw "SQL:Syntax error";
+                                 }
+                             }
+                         }
+                     }
+                 }
+             }
+         }
+         // Interpretado, llamar a get, reemplazar y ejecutar PUT
+         // Verificando que las columnas tengan los valores que deben existir en la tabla
+         LinkedList<string> columnasPred;
+         columnasPred.push_back("descripcion");
+         columnasPred.push_back("autor");
+         columnasPred.push_back("year");
+         bool existe = false;
+         for(pair<string,string> elemento:mapa){  // Para cada elemento en columnas
+             string col = elemento.first;
+             for(int i=0;i<columnasPred.getSize();i++){  // Para cada elemento en columnasPred
+                 if(!existe && col == columnasPred.getElemento(i)->getData()){ // Si elemento esta en columnasPred
+                     existe = true;
+                 }
+             }
+             if(!existe){
+                 throw "Se actualizo una columna que no deberia de";
+             }
+         }
+
+         RestClient::Get("SELECT * FROM "+gal+" "+cond);
+         nlohmann::json jsonArrJ = nlohmann::json::parse(RestClient::respuesta);
+         string s = jsonArrJ.dump();
+         std::vector<nlohmann::json> jsonArrV = jsonArrJ["array"];
+         for(nlohmann::json lineaJ:jsonArrV){
+             for(pair<string, string> elemento:mapa){
+                 lineaJ[elemento.first] = lineaJ[elemento.second];
+             }
+             string fak1 = lineaJ.dump();
+             RestClient::Delete(fak1);
+         }
+         return pair<string,string>("Exito","");
+
+     };
+
+    /** @brief Metodo Delete SQL.
+     *
+     * Se ejecuta cuando la primera palabra de la sintaxis coincide con Delete.
+     * Se encarga de mimetizar el metodo INSERT que exite en SQL.
+     * La sintaxis debe ser la siguiente:
+     * DELETE FROM table WHERE cond.
+     * De no indicarse condicion se elimina to do lo de la tabla.
+     *
+     * @param syntax Sintaxis de SQL
+     * @returns exito de la ejecucion
+     * @throws Excepcion si hay error de sintaxis
+     * */
+    static pair<string, string> Delete(string syntax){
+        const char* syntaxC = syntax.c_str();
+         string into;
+         bool warning = false;
+         bool ignore = true;
+         bool open = false;
+         bool galB = false;
+         std::vector<string> columnas = std::vector<string>();
+         std::vector<string> valores = std::vector<string>();
+         string val;
+         string values;
+         string col;
+         string galeria;
+         string cond;
+
+         for(int i =0;i<syntax.size();i++){ // Parte del hecho que la primera palabra es INSERT
+             if(syntaxC[i] != 32){
+                 ignore = false;  // Ignore espacios a la izquierda
+             }else if(!ignore){  // Termina la primera palabra
+                 if(syntaxC[i] == 32){  // Debo estar en un espacio
+                     i++;
+                 }else {
+                     throw "SQL:Syntax error";
+                 }
+                 ignore = true;
+                 for(i;i<syntax.size();i++){
+                     if(syntaxC[i] != 32){
+                         into += syntaxC[i];
+                         ignore = false;  // Ignora espacios a la izquierda
+                     }else if(!ignore){  // Termina la segunda palabra
+                         transform(into.begin(), into.end(), into.begin(), ::tolower);
+                         if(into == "from"){
+                             if(syntaxC[i] == 32){  // Debo estar en un espacio
+                                 i++;
+                             }else {
+                                 throw "SQL:Syntax error";
+                             }
+                             for(i;i<syntax.size();i++){
+                                 ignore = true;
+                                 if(!galB) {
+                                     for (i; i < syntax.size(); i++) {
+                                         if (syntaxC[i] != 32) {
+                                             galeria += syntaxC[i];
+                                             ignore = false;
+                                         } else if (!ignore) {
+                                             break;
+                                         }
+                                     }
+                                     galB = true;
+                                 }
+                             }
+                             // Aqui ya tiene galeria, sigue condicion
+                             ignore = true;
+                             for(i;i<syntax.size();i++){
+                                 if(syntaxC[i] != 32){
+                                     cond += syntaxC[i];
+                                     ignore = false;
+                                 }else if(!ignore){  // termina condicion
+                                     // Si hay algo despues de aqui ademas de espacio se cae
+                                     for(i;i<syntax.size();i++){
+                                         if(syntaxC[i] != 32){
+                                             throw "SQL:Syntax error";
+                                         }
+                                     }
+                                 }
+                             }
+                         }else{
+                             throw "SQL: Syntax error";
+                         }
+                     }
+                 }
+             }
+         }
+
+         // Interpretado, llamar a get con galeria y condicion
+         RestClient::Get("SELECT * FROM "+galeria + " WHERE "+cond);
+         nlohmann::json jsonArrJ = nlohmann::json::parse(RestClient::respuesta);
+         std::vector<nlohmann::json> jsonArrV = jsonArrJ["array"];
+         for(nlohmann::json lineaJ:jsonArrV){
+             string fak1 = lineaJ.dump();
+             RestClient::Delete(fak1);
+         }
+         return pair<string,string>("Exito","");
+    };
 
     /** @brief Metodo Insert SQL.
      *
