@@ -77,8 +77,7 @@ using namespace std;
          * @param str string que se codifica
          * @param huffmanCode mapa que almacena los codigos con su respectivo char
          */
-        void pre_encode(Node *root, string str,
-                        unordered_map<char, string> &huffmanCode) {
+        void pre_encode(Node *root, string str, unordered_map<char, string> &huffmanCode) {
             if (root == nullptr)
                 return;
 
@@ -133,6 +132,7 @@ using namespace std;
 
             //Crea un nodo hoja para cada uno de los char y lo anade a la cola de prioridad
             for (auto pair: freq) {
+                cout<<pair.second<<endl;
                 pq.push(getNode(pair.first, pair.second, nullptr, nullptr));
             }
 
@@ -170,7 +170,10 @@ using namespace std;
             this->encoded_string = str;
             this->decoded_string = text;
             this->decoding_map = huffmanCode;
+            txtFormatting(text, root);
         }
+
+
 /**
  * Funcion que realiza todo el proceso de decodificacion
  * @param text string que se desea decodificar
@@ -178,16 +181,114 @@ using namespace std;
  * @param root nodo raiz mediante el cual se obtiene el arbol
  * @return string decodificado
  */
-        string decode(string text,unordered_map<char, string> huffmanCode, Node *root) {
-            //Recorre el arbol para decodificar el string
-            string str = "";
-            int index = -1;
-            while (index < (int) text.size() - 2) {
-                str += pre_decode(root, index, text);
+        string decode(string text,unordered_map<char, string> huffmanCode) {    //Recorre el mapa para decodificar el string
+            //string decodificado final
+            string resultado = "";
+            //letra actual encontrada en text
+            string current_letter = "";
+            //Codigo con el que se busca la letra en el mapa
+            char key_fndr = '\0';
+            //Contador de truncado a text
+            int counter;
+            while(text!=""){
+                cout<<key_fndr<<endl;
+                if(huffmanCode.find(key_fndr)!=huffmanCode.end()){
+                    current_letter = huffmanCode.find(key_fndr)->second;
+                    resultado+=current_letter;
+                    text.erase(0, counter);
+                    key_fndr = '\0';
+                    counter = 0;
+                }
+                else{
+                    counter++;
+                    string tmp = text.substr(0, counter);
+                    key_fndr = *tmp.c_str();
+                }
             }
-            cout << "\nDecoded string is: " << endl;
+            cout<<resultado<<endl;
+            return resultado;
 
         }
+
+        //Se van a escribir las listas en preorden y orden, strings
+        //Con el siguiente formato: $MENSAJE_CODIFICADO#ARBOL_PREORDEN#ARBOL_INORDEN$
+        //La escritura de los nodos raices tiene el siguiente formato: !_%frq
+        //La escritura de los nodos hojas tienen el siguiente formato: !char%frq
+        string preorderTree(Node* raiz){
+            if(raiz != nullptr){
+                //String final armado recursivamente
+                string result = "";
+                //If found a leaf node
+                if(!raiz->left && !raiz->right){
+                    string tmp = "!";
+                    tmp.push_back(raiz->ch);
+                    tmp += "%";
+                    tmp += raiz->freq;
+                    result = tmp;
+                    return result;
+                }
+                else{
+                    //Anade la raiz
+                    string tmp = "!_%";
+                    tmp += to_string(raiz->freq);
+                    result += tmp;
+                    //Anade el hijo izquierdo en preordden
+                    result += preorderTree(raiz->left);
+                    //Anade el hijo derecho en preorden
+                    result += preorderTree(raiz->right);
+                }
+                return result;
+            }
+            else{
+                cout<<"Arbol nullptr"<<endl;
+                return "";
+            }
+        }
+
+        string inorderTree(Node* raiz){
+            if(raiz != nullptr){
+                //String final armado recursivamente
+                string result = "";
+                //If found a leaf node
+                if(!raiz->left && !raiz->right){
+                    string tmp = "!";
+                    tmp.push_back(raiz->ch);
+                    tmp += "%";
+                    tmp += raiz->freq;
+                    result = tmp;
+                    return result;
+                }
+                else{
+                    result += inorderTree(raiz->left);
+                    string tmp = "!_%";
+                    tmp += to_string(raiz->freq);
+                    result += tmp;
+                    result += inorderTree(raiz->right);
+                }
+                return result;
+            }
+            else{
+                cout<<"Arbol nullptr"<<endl;
+                return "";
+            }
+        }
+
+        string txtFormatting(string text_code, Node* raiz) {
+            if (text_code != "" && raiz != nullptr) {
+                string result = "$";
+                result += (text_code + "#");
+                result += preorderTree(raiz);
+                result += "#";
+                result += inorderTree(raiz);
+                cout<<result<<endl;
+                return result;
+            }
+            else{
+                cout<<"Error, no hay mensaje que codificar"<<endl;
+            }
+      }
+
+
     }Compressor;
 
 

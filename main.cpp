@@ -3,5 +3,6 @@
 
 using namespace std;
 int main() {
-    return 0;
+    Compressor.encode("Hola soy Cvaz");
+    //Compressor.decode("1110110010100011111111010110110011010100000", Compressor.decoding_map);
 }
