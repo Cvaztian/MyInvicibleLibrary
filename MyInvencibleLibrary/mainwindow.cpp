@@ -72,6 +72,19 @@ void MainWindow::on_insertar_boton_clicked()
 
 void MainWindow::on_visualizar_boton_clicked()
 {
+
+    //tabla de prueba
+
+    ui->tableWidget->setColumnCount(3);
+    ui->tableWidget->setRowCount(5);
+    QStringList m_TableHeader;
+    m_TableHeader <<"#"<<"Name"<<"Text";
+    ui->tableWidget->setHorizontalHeaderLabels(m_TableHeader);
+    ui->tableWidget->setItem(0, 1, new QTableWidgetItem("Hello"));
+    ui->tableWidget->setItem(1, 2, new QTableWidgetItem("Hello"));
+    ui->tableWidget->setItem(2, 3, new QTableWidgetItem("Hello"));
+
+    //tabla de prueba
     nlohmann::json sendable = {
             {"imagen",std::vector<char>()},
             {"size",-1},
