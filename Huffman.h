@@ -170,7 +170,8 @@ using namespace std;
             this->encoded_string = str;
             this->decoded_string = text;
             this->decoding_map = huffmanCode;
-            txtFormatting(text, root);
+            string test = txtFormatting(text, root);
+            buildTree(test.substr(test.find("#")+1, test.rfind("#")-test.find("#")-1), test.substr(test.rfind("#")+1, test.length()));
         }
 
 
@@ -223,7 +224,7 @@ using namespace std;
                     string tmp = "!";
                     tmp.push_back(raiz->ch);
                     tmp += "%";
-                    tmp += raiz->freq;
+                    tmp += "0";
                     result = tmp;
                     return result;
                 }
@@ -254,7 +255,7 @@ using namespace std;
                     string tmp = "!";
                     tmp.push_back(raiz->ch);
                     tmp += "%";
-                    tmp += raiz->freq;
+                    tmp += "0";
                     result = tmp;
                     return result;
                 }
@@ -288,7 +289,39 @@ using namespace std;
             }
       }
 
-
+        Node* buildTree(string preordr, string inordr){
+            if(preordr != "" && inordr != ""){
+                //Takes first element of preorder as root
+                char charac = preordr[1];       //!0,char1
+                preordr.erase(0,3);     //freq1!char%freq2
+                int freq = stoi(preordr.substr(0, preordr.find("!")));      //desde inicio hasta llegar a siguiente nodo
+                Node *root = getNode(charac, freq, nullptr, nullptr);       //crea un nodo con el char y freq
+                preordr.erase(0,preordr.find("!"));     //elimina totalmente los datos del primer nodo en preorder
+                if(preordr != "") {
+                    //Finds the position of the root element in inorder
+                    string tmp_root = "!";
+                    tmp_root.push_back(charac);
+                    tmp_root += ("%" + to_string(freq));
+                    int pos_inordr = inordr.find(
+                            tmp_root);     //Guarda el valor de la posicion donde esta el nodo raiz en inorder
+                    //Left subtree
+                    string prev_2_root = inordr.substr(0, pos_inordr);      //Obtiene el string de la lista inorder antes de la raiz
+                    int size_of_prev = prev_2_root.length() - prev_2_root.rfind("!");       //Obtiene el tamano que tiene el ultimo elemento de inorder, el mismo ultimo delemento para preorder
+                    string tmp_preordr = preordr.substr(0, preordr.find(prev_2_root.substr(prev_2_root.rfind("!"), size_of_prev))+size_of_prev);  //tmp va desde el comienzo hasta el ultimo elemento de inorder antes de la raiz actual
+                    string tmp_inordr = inordr.substr(0, pos_inordr);       //Lista de nodos inorder antes de raiz
+                    root->left = buildTree(tmp_preordr, tmp_inordr);
+                    //Right subtree
+                    preordr.erase(0, tmp_preordr.length());  //Borra los elementos innecesarios
+                    inordr.erase(0, inordr.find(tmp_root)+tmp_root.length());       //Borra todos los elementos de la raiz para atras
+                    root->right = buildTree(preordr, inordr);
+                }
+                return root;
+                //
+            }
+            else{
+                return nullptr;
+            }
+        }
     }Compressor;
 
 
