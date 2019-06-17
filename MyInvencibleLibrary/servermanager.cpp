@@ -27,7 +27,14 @@ void ServerManager::handle_error(pplx::task<void>& t)
 
 //
 // Get Request
-//
+/* Antes: Llega json, llamo a base de datos, recibo una sola metadata, luego llamo a RAID
+ * para adjuntar la imagen a la metadata que recibi y devuelvo al cliente esta respuesta.
+ * Ahora: LLega sintaxis SQL, interpreto, llamo a getAll de base de datos con parametro galeria
+ * recibo un json con un array de jsons, todos en su forma de string, devuelvo este array al
+ * cliente.
+ * O
+ * Llega ID de imagen, llamo a RAID para conseguir la imagen de ese ID, me retorna la imagen
+ * y devuelvo al cliente.*/
 void ServerManager::handle_get(http_request message)
 {
     ucout << "Operacion get\n";
@@ -38,13 +45,49 @@ void ServerManager::handle_get(http_request message)
     pplx::task<utility::string_t> body_json = message.extract_string();
 
     string contenido = body_json.get();
-    nlohmann::json response = nlohmann::json::parse(contenido); // Convierto a json
-    Metadata responseObj = Metadata::jsonParse(response);  // Objeto metadata
+    string cs;
+
+    if(!is_number(contenido)){
+        pair<string,string> interpretacion = Interprete::Interpretar(contenido);
+        string galeria = interpretacion.first;
+        string cond = interpretacion.second;
+        string response;
 
     // Consiguiendo metadata
-    responseObj.protocolo = 0; // Protocolo 0 es get
-    sockets->specialSend(responseObj.getJson().dump(), "base");  // Pido la metadata a la base de datos
-    response = nlohmann::json::parse(sockets->receiveS("base")); // La recibo
+    Metadata responseObj = Metadata();
+    responseObj.protocolo = 4; // Protocolo 4 es get all
+    responseObj.galeria = galeria;
+    sockets->specialSend(responseObj.getJson().dump(), "base");  // Pido las metadatas a la base de datos
+    cs = sockets->receiveS("base");
+
+
+
+    if(!cond.empty()){  // si hay condiciones
+        std::vector<nlohmann::json> jsnVecCnd = Interprete::Cond(nlohmann::json::parse(cs), cond);
+        nlohmann::json jsnCnd = {{"array",jsnVecCnd}};
+        cs = jsnCnd.dump();
+    }
+
+
+    }else{
+        // Consiguiendo imagen
+        Metadata responseObj = Metadata();
+        responseObj.protocolo = 0;
+        responseObj.id = std::atoi(contenido.c_str());
+        sockets->specialSend(responseObj.getJson().dump(), "raid");  // Pido imagen
+        cs = sockets->specialReceive("raid");
+        if(responseObj.mensaje == "404") { // Check for exceptions
+            cout << "Error interno: Hay imagen en base de datos, pero no en disco.\n";
+            responseObj.mensaje = "Error, hay imagen en base de datos pero no en disco.\n";
+            returning = responseObj.getJson().dump();
+            message.reply(status_codes::InternalError, returning);
+            return;
+        }
+    }
+
+
+    //response = nlohmann::json::parse(cs); // A este punto se tiene un json con array de jsons
+    /*
     responseObj = Metadata::jsonParseFile(response);
     if(responseObj.mensaje == "404"){ //Check for exceptions
         cout << "Not found\n";
@@ -53,23 +96,15 @@ void ServerManager::handle_get(http_request message)
         message.reply(status_codes::NotFound,returning);
         return;
     }
-    // Consiguiendo imagen
-    responseObj.protocolo = 0;
-    sockets->specialSend(responseObj.getJson().dump(), "raid");  // Pido imagen
-    response = nlohmann::json::parse(sockets->specialReceive("raid")); // La recibo, se cae aca por la imagen
-    responseObj = Metadata::jsonParse(response);
-    if(responseObj.mensaje == "404"){ // Check for exceptions
-        cout << "Error interno: Hay imagen en base de datos, pero no en disco.\n";
-        responseObj.mensaje = "Error, hay imagen en base de datos pero no en disco.\n";
-        returning = responseObj.getJson().dump();
-        message.reply(status_codes::InternalError, returning);
-        return;
-    }
+
+
+
+
+    */
 
     // Devolviendo, a este punto response tiene todo lo necesario
     ucout <<  "Operacion exitosa." << endl;
-    returning = response.dump();
-    message.reply(status_codes::OK,returning);
+    message.reply(status_codes::OK,cs);
     //std::cout<<rep;
 };
 
@@ -213,4 +248,10 @@ void ServerManager::handle_put(http_request message)
     message.reply(status_codes::OK,returning);
     return ;
 
+}
+
+bool ServerManager::is_number(const std::string& s)
+{
+    return !s.empty() && std::find_if(s.begin(),
+                                      s.end(), [](char c) { return !std::isdigit(c); }) == s.end();
 }

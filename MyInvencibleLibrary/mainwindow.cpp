@@ -3,6 +3,7 @@
 #include <QDragEnterEvent>
 #include <QMimeData>
 #include <fstream>
+#include "Interprete.h"
 
 using namespace std;
 MainWindow::MainWindow(QWidget *parent) :
@@ -97,9 +98,19 @@ void MainWindow::on_visualizar_boton_clicked()
             {"id",-1},
             {"year",""}
     };
-    RestClient::Get(sendable.dump());
 
-    cout << RestClient::respuesta;
+    string peticion = "select * from Pruebas WHERE id = 1";
+
+    RestClient::Get(peticion);
+
+    LinkedList<LinkedList<string>> lineas = Interprete::getCampos(nlohmann::json::parse(RestClient::respuesta),peticion);
+
+    cout << RestClient::respuesta << flush;
+    /* Esto es para obtener una imagen
+    nlohmann::json ayay = nlohmann::json::parse(RestClient::respuesta);  // Al parecer llega bien
+    vector<nlohmann::json> prueba = ayay["array"];
+    nlohmann::json asd = prueba[0];
+    cout << asd["id"] << flush;*/
 }
 
 void MainWindow::on_modificar_boton_clicked()

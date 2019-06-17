@@ -111,18 +111,19 @@ std::string ServerSocket::specialReceive(std::string socket) {
     for(int i = 0; i<length+2;i++){  // Inicializa el buffer en 0s
         buffer[i] = 0;
     }
+    read(socketnum, buffer, length);
     bfs = buffer;
     while(length != bfs.size()){
-        sendS("false",socket);  // Envia al remisor la sennal de que se recibio mal el mensaje
+        //sendS("false",socket);  // Envia al remisor la sennal de que se recibio mal el mensaje
         //free(buffer);   // Elimina el buffer pasado
         char buffer[length+2];  // Inicia un nuevo buffer para guardar el nuevo mensaje
         for(int i = 0; i<length+2;i++){  // Inicializa el buffer en 0s
              buffer[i] = 0;
         }
         read(socketnum, buffer, length);  // Lee de nuevo
-        bfs = buffer;
+        bfs += buffer;
     }
-    sendS("true", socket);
+    //sendS("true", socket);
     return bfs;  // Deuvelve el mensaje cuando se recibe bien
 }
 

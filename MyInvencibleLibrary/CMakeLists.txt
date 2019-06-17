@@ -1,15 +1,16 @@
-cmake_minimum_required (VERSION 3.5)
+cmake_minimum_required (VERSION 3.10)
 if (UNIX)
   add_definitions(-Wno-sign-compare -Wno-enum-compare)
 endif(UNIX)
 project(MyInvencibleLibrary)
-set (CMAKE_CXX_STANDARD 11)
+set (CMAKE_CXX_STANDARD 17)
+
 option(DBMS "Dbms" OFF)
 include_directories("${CMAKE_SOURCE_DIR}")
 set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/cmake-build-debug)
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -lstdc++fs -pthread -g -Wall")
 
 FIND_PACKAGE(Qt5Core)
 FIND_PACKAGE(Qt5Gui)
@@ -28,21 +29,22 @@ add_executable(restserver
           )
 
 
-add_executable(restclient clientmain.cpp restclient.cpp restclient.h metadata.h metadata.cpp)
+add_executable(restclient clientmain.cpp restclient.cpp restclient.h metadata.h metadata.cpp
+        Interprete.h LinkedList.h Node.h)
 add_executable(pruebasJson jsonmain.cpp metadata.cpp metadata.h)
 add_executable(socketclient socketclient.cpp clientsocket.cpp clientsocket.h clientmanager.cpp
     clientmanager.h metadata.cpp metadata.h)
 add_executable(socketserver socketserver.cpp serversocket.cpp serversocket.h )
 add_executable(ServerLib libmain.cpp src/handler.cpp
     servermanager.cpp servermanager.h serversocket.h serversocket.cpp
-    metadata.cpp metadata.h)
+    metadata.cpp metadata.h Interprete.h LinkedList.h Node.h)
 
 add_executable(MetadataDB fiomain.cpp
     dbmanager.cpp dbmanager.h
     metadata.h metadata.cpp
     clientsocket.cpp clientsocket.h clientmanager.cpp
     clientmanager.h
-    )
+        Interprete.h LinkedList.h Node.h)
     
 add_executable(RAID mainP.cpp RAID.h
         clientmanager.h clientmanager.cpp
@@ -51,7 +53,11 @@ add_executable(RAID mainP.cpp RAID.h
         clientsocket.h clientsocket.cpp
         metadata.h metadata.cpp
         )
-add_executable(Interfaz Interfaz.pro main.cpp mainwindow.cpp mainwindow.h mainwindow.ui restclient.cpp restclient.h metadata.h metadata.cpp)
+add_executable(Interfaz Interfaz.pro main.cpp mainwindow.cpp mainwindow.h mainwindow.ui restclient.cpp restclient.h
+        metadata.h metadata.cpp Interprete.h LinkedList.h Node.h)
+add_executable(Interprete InterpreteMain.cpp dbmanager.cpp dbmanager.h metadata.cpp
+        metadata.h LinkedList.h Node.h)
+
 add_subdirectory(json)
 
 set(Casablanca_LIBRARIES "-lboost_system -lcrypto -lssl -lcpprest")
@@ -72,7 +78,7 @@ else(DBMS)
     target_link_libraries(RAID nlohmann_json::nlohmann_json)
             target_link_libraries(MetadataDB nlohmann_json::nlohmann_json)
         target_link_libraries(Interfaz Qt5::Widgets Qt5::PrintSupport nlohmann_json::nlohmann_json ${Casablanca_LIBRARIES})
-
+        target_link_libraries(Interprete nlohmann_json::nlohmann_json)
 endif(DBMS)
 
 
