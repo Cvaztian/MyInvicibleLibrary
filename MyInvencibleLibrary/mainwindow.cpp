@@ -50,6 +50,14 @@ void MainWindow::dropEvent(QDropEvent *event){
 
 void MainWindow::on_insertar_boton_clicked()
 {
+    //verificacion de imagen cargada
+    string input = get_insertar_galeria().substr(0,5);
+    bool ver = (input == "INSERT" || input == "insert");
+    if(ver && (!get_insertar_ruta().empty() && get_insertar_ruta() != "Ruta de la imagen"){
+        //proceso
+    }else{
+        //tirar advertencia
+    }
     pair<int, char*> auxiliar = abrir_archivo(get_insertar_ruta());
     std::vector<char> imagen = std::vector<char>();
     int tam = auxiliar.first;
