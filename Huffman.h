@@ -171,7 +171,8 @@ using namespace std;
             this->decoded_string = text;
             this->decoding_map = huffmanCode;
             string test = txtFormatting(text, root);
-            buildTree(test.substr(test.find("#")+1, test.rfind("#")-test.find("#")-1), test.substr(test.rfind("#")+1, test.length()));
+
+            cout<<decode(str, root)<<endl;
         }
 
 
@@ -182,34 +183,7 @@ using namespace std;
  * @param root nodo raiz mediante el cual se obtiene el arbol
  * @return string decodificado
  */
-        string decode(string text,unordered_map<char, string> huffmanCode) {    //Recorre el mapa para decodificar el string
-            //string decodificado final
-            string resultado = "";
-            //letra actual encontrada en text
-            string current_letter = "";
-            //Codigo con el que se busca la letra en el mapa
-            char key_fndr = '\0';
-            //Contador de truncado a text
-            int counter;
-            while(text!=""){
-                cout<<key_fndr<<endl;
-                if(huffmanCode.find(key_fndr)!=huffmanCode.end()){
-                    current_letter = huffmanCode.find(key_fndr)->second;
-                    resultado+=current_letter;
-                    text.erase(0, counter);
-                    key_fndr = '\0';
-                    counter = 0;
-                }
-                else{
-                    counter++;
-                    string tmp = text.substr(0, counter);
-                    key_fndr = *tmp.c_str();
-                }
-            }
-            cout<<resultado<<endl;
-            return resultado;
 
-        }
 
         //Se van a escribir las listas en preorden y orden, strings
         //Con el siguiente formato: $MENSAJE_CODIFICADO#ARBOL_PREORDEN#ARBOL_INORDEN$
@@ -320,6 +294,37 @@ using namespace std;
             }
             else{
                 return nullptr;
+            }
+        }
+
+        string decode(string code, Node* tree){
+            cout<<"El mensaje es:"<<endl;
+            if(code != "" && tree != nullptr){
+                string result = "";
+                Node* tmp_node = tree;
+                bool execute = true;
+                while(execute){
+                    if((tmp_node->left == nullptr) && (tmp_node->right == nullptr)){
+                        result += tmp_node->ch;
+                        tmp_node = tree;
+                        if(code == ""){
+                            execute = false;
+                        }
+                    }
+                    else{
+                        if(code.substr(0,1) == "0"){
+                            tmp_node = tmp_node->left;
+                        }
+                        else{
+                            tmp_node = tmp_node->right;
+                        }
+                        code.erase(0, 1);
+                    }
+                }
+                return result;
+            }
+            else{
+                cout<<"Error, ingrese un coigo y arbol valido"<<endl;
             }
         }
     }Compressor;
