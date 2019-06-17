@@ -5,6 +5,7 @@
 #ifndef HUFFMAN_HUFFMAN_H
 #define HUFFMAN_HUFFMAN_H
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <queue>
 #include <unordered_map>
@@ -77,8 +78,7 @@ using namespace std;
          * @param str string que se codifica
          * @param huffmanCode mapa que almacena los codigos con su respectivo char
          */
-        void pre_encode(Node *root, string str,
-                        unordered_map<char, string> &huffmanCode) {
+        void pre_encode(Node *root, string str, unordered_map<char, string> &huffmanCode) {
             if (root == nullptr)
                 return;
 
@@ -133,6 +133,7 @@ using namespace std;
 
             //Crea un nodo hoja para cada uno de los char y lo anade a la cola de prioridad
             for (auto pair: freq) {
+                cout<<pair.second<<endl;
                 pq.push(getNode(pair.first, pair.second, nullptr, nullptr));
             }
 
@@ -151,7 +152,7 @@ using namespace std;
             }
 
             //El nodo raiz almacena una referencia al arbol
-            Node *root = pq.top();
+            root = pq.top();
 
             // Recorre el arbol y guarda los codigos calculados en un map, y los imprime
             unordered_map<char, string> huffmanCode;
@@ -170,23 +171,208 @@ using namespace std;
             this->encoded_string = str;
             this->decoded_string = text;
             this->decoding_map = huffmanCode;
-        }
-/**
- * Funcion que realiza todo el proceso de decodificacion
- * @param text string que se desea decodificar
- * @param huffmanCode map de codigos y char respectivos
- * @param root nodo raiz mediante el cual se obtiene el arbol
- * @return string decodificado
- */
-        string decode(string text,unordered_map<char, string> huffmanCode, Node *root) {
-            //Recorre el arbol para decodificar el string
-            string str = "";
-            int index = -1;
-            while (index < (int) text.size() - 2) {
-                str += pre_decode(root, index, text);
-            }
-            cout << "\nDecoded string is: " << endl;
 
+            //Creates txt and writes the formatted text
+            ofstream outfile ("Huffman.txt");
+            outfile <<txtFormatting(str, root)<< std::endl;
+
+            //cout<<decode_aux(str, root)<<endl;
+        }
+        
+        /**
+        * Funcion que, a partir del arbol huffman, crea una lista de sus elementos
+        * en preorden en formato  !char%frq (_ si char es nulo, 0 si freq es nula)
+        * @param Nodo raiz con la referencia al arbol
+        * @return string en formato definido
+        */
+        string preorderTree(Node* raiz){
+            if(raiz != nullptr){
+                //String final armado recursivamente
+                string result = "";
+                //If found a leaf node
+                if(!raiz->left && !raiz->right){
+                    string tmp = "!";
+                    tmp.push_back(raiz->ch);
+                    tmp += "%";
+                    tmp += "0";
+                    result = tmp;
+                    return result;
+                }
+                else{
+                    //Anade la raiz
+                    string tmp = "!_%";
+                    tmp += to_string(raiz->freq);
+                    result += tmp;
+                    //Anade el hijo izquierdo en preordden
+                    result += preorderTree(raiz->left);
+                    //Anade el hijo derecho en preorden
+                    result += preorderTree(raiz->right);
+                }
+                return result;
+            }
+            else{
+                cout<<"Arbol nullptr"<<endl;
+                return "";
+            }
+        }
+
+        /**
+        * Funcion que, a partir del arbol huffman, crea una lista de sus elementos
+        * en orden en formato  !char%frq (_ si char es nulo, 0 si freq es nula)
+        * @param Nodo raiz con la referencia al arbol
+        * @return string en formato definido
+        */
+        string inorderTree(Node* raiz){
+            if(raiz != nullptr){
+                //String final armado recursivamente
+                string result = "";
+                //If found a leaf node
+                if(!raiz->left && !raiz->right){
+                    string tmp = "!";
+                    tmp.push_back(raiz->ch);
+                    tmp += "%";
+                    tmp += "0";
+                    result = tmp;
+                    return result;
+                }
+                else{
+                    result += inorderTree(raiz->left);
+                    string tmp = "!_%";
+                    tmp += to_string(raiz->freq);
+                    result += tmp;
+                    result += inorderTree(raiz->right);
+                }
+                return result;
+            }
+            else{
+                cout<<"Arbol nullptr"<<endl;
+                return "";
+            }
+        }
+
+        /**
+        * Funcion que arregla el codigo huffman, lista preorden y lista en orden
+        * @param string codigo huffman
+        * @param Nodo raiz con la referencia al arbol
+        * @return string en formato $CODIGO#ARBOL_PREORDEN#ARBOL_INORDEN$
+        */
+        string txtFormatting(string text_code, Node* raiz) {
+            if (text_code != "" && raiz != nullptr) {
+                string result = "$";
+                result += (text_code + "#");
+                result += preorderTree(raiz);
+                result += "#";
+                result += inorderTree(raiz);
+                cout<<result<<endl;
+                return result;
+            }
+            else{
+                cout<<"Error, no hay mensaje que codificar"<<endl;
+            }
+        }
+
+        /**
+        * Funcion que reconstruye el arbol huffman a partir de las listas
+        * de sus elementos en preorden y orden
+        * @param string elementos en preorden
+        * @param string elementos en orden
+        * @return Node con la referencia al arbol reconstruido
+        */
+        Node* buildTree(string preordr, string inordr){
+            if(preordr != "" && inordr != ""){
+                //Takes first element of preorder as root
+                char charac = preordr[1];       //!0,char1
+                preordr.erase(0,3);     //freq1!char%freq2
+                int freq = stoi(preordr.substr(0, preordr.find("!")));      //desde inicio hasta llegar a siguiente nodo
+                Node *root = getNode(charac, freq, nullptr, nullptr);       //crea un nodo con el char y freq
+                preordr.erase(0,preordr.find("!"));     //elimina totalmente los datos del primer nodo en preorder
+                if(preordr != "") {
+                    //Finds the position of the root element in inorder
+                    string tmp_root = "!";
+                    tmp_root.push_back(charac);
+                    tmp_root += ("%" + to_string(freq));
+                    int pos_inordr = inordr.find(
+                            tmp_root);     //Guarda el valor de la posicion donde esta el nodo raiz en inorder
+                    //Left subtree
+                    string prev_2_root = inordr.substr(0, pos_inordr);      //Obtiene el string de la lista inorder antes de la raiz
+                    int size_of_prev = prev_2_root.length() - prev_2_root.rfind("!");       //Obtiene el tamano que tiene el ultimo elemento de inorder, el mismo ultimo delemento para preorder
+                    string tmp_preordr = preordr.substr(0, preordr.find(prev_2_root.substr(prev_2_root.rfind("!"), size_of_prev))+size_of_prev);  //tmp va desde el comienzo hasta el ultimo elemento de inorder antes de la raiz actual
+                    string tmp_inordr = inordr.substr(0, pos_inordr);       //Lista de nodos inorder antes de raiz
+                    root->left = buildTree(tmp_preordr, tmp_inordr);
+                    //Right subtree
+                    preordr.erase(0, tmp_preordr.length());  //Borra los elementos innecesarios
+                    inordr.erase(0, inordr.find(tmp_root)+tmp_root.length());       //Borra todos los elementos de la raiz para atras
+                    root->right = buildTree(preordr, inordr);
+                }
+                return root;
+                //
+            }
+            else{
+                return nullptr;
+            }
+        }
+
+        /**
+        * Funcion que abre el archivo con el formato huffman y llama
+        * a otra funcion auxiliar para decodificarlo
+        * @return string mensaje decodificado
+        */
+        string decode(){
+            ifstream huf_file;
+            huf_file.open("/home/cvaz/Documents/Algoritmos y Estructuras de Datos II/MyInvicibleLibrary/MyInvicibleLibrary/cmake-build-debug/Huffman.txt");
+            if(!huf_file){
+                cout<<"Error con la direccion del archivo"<<endl;
+            }
+            else{
+                string format;
+                getline(huf_file, format);
+                format.erase(0, 1);
+                format = format.substr(0, format.find("#"));
+                cout<<"El formato es: " + format<<endl;
+                return decode_aux(format, root);
+            }
+        }
+
+        /**
+        * Funcion auxiliar que decodifica el mensaje
+        * @param string codigo huffman
+        * @param Nodo raiz con la referencia al arbol
+        * @return string mensaje decodificado
+        */
+        string decode_aux(string code, Node* tree){
+            if(code != "" && tree != nullptr){
+                string result = "";
+                Node* tmp_node = tree;      //Nodo con el que se recorre el arbol
+                bool execute = true;
+                while(execute){
+                    //Si llega a un nodo hoja, anade la letra al resultado
+                    if((tmp_node->left == nullptr) && (tmp_node->right == nullptr)){
+                        result += tmp_node->ch;
+                        tmp_node = tree;
+                        //Si anade el ultimo caracter y se acaba el codigo
+                        if(code == ""){
+                            execute = false;
+                        }
+                    }
+                    //Si es un nodo raiz
+                    else{
+                        //Si el codigo indica 0, toma el camino izquierdo
+                        if(code.substr(0,1) == "0"){
+                            tmp_node = tmp_node->left;
+                        }
+                        //Si el codigo indica 1, toma el camino derecho
+                        else{
+                            tmp_node = tmp_node->right;
+                        }
+                        code.erase(0, 1);   //Elimina el elemento que acaba de evaluar
+                    }
+                }
+                cout<<"El mensaje es: " + result<<endl;
+                return result;
+            }
+            else{
+                cout<<"Error, ingrese un codigo y arbol valido"<<endl;
+            }
         }
     }Compressor;
 
