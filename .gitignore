@@ -8,3 +8,7 @@ MyInvencibleLibrary/dbms/
 MyInvencibleLibrary/include/
 
 MyInvencibleLibrary/
+
+Doxygen
+
+ServerLib/CMakeLists\.txt\.user
