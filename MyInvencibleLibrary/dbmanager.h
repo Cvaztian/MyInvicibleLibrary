@@ -1,6 +1,7 @@
 #ifndef DBMANAGER_H
 #define DBMANAGER_H
 #include <string>
+#include "Huffman.h"
 #include "nlohmann/json.hpp"
 #include <iostream>
 #include <fstream>
@@ -80,6 +81,7 @@ public:
 private:
     static int id; /** Contador estatico del id de los archivos*/
 
+    Huffman compressor;
 
     /** @brief Verifica si existe galeria.
      * Version auxiliar que verifica la existencia de una galeria

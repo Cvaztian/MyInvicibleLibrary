@@ -51,7 +51,8 @@ add_executable(RAID mainP.cpp RAID.h
         clientsocket.h clientsocket.cpp
         metadata.h metadata.cpp
         )
-add_executable(Interfaz Interfaz.pro main.cpp mainwindow.cpp mainwindow.h mainwindow.ui restclient.cpp restclient.h metadata.h metadata.cpp)
+add_executable(Interfaz Interfaz.pro mainwindow.cpp mainwindow.h mainwindow.ui restclient.cpp restclient.h metadata.h metadata.cpp)
+add_executable(Huffman Huffman.h Huffmain.cpp)
 add_subdirectory(json)
 
 set(Casablanca_LIBRARIES "-lboost_system -lcrypto -lssl -lcpprest")

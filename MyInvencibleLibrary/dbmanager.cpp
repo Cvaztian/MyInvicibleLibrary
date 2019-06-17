@@ -20,6 +20,7 @@ DBManager::DBManager()
     }else{  // Si no hay registro de id anterior
         DBManager::id = 0;
     }
+    compressor = Huffman();
 }
 
 DBManager::~DBManager()
@@ -97,9 +98,10 @@ string DBManager::Insert(json metadata)
         metadataObj.id = nid;  // Asigna el id
         ofstream myfile;
         string spath = metadataObj.galeria + "/" + metadataObj.nombre+".json";
-        myfile.open (spath);  // Se puede especificar una carpeta, si existe, crea el archivo dentro, si no, no hace nada.
-        myfile << metadataObj.getJsonFile();  // Esto crea un nuevo archivo y reescribe todo lo que hay en el
-        myfile.close();
+        compressor.encode(metadataObj.getJsonFile().dump(),spath);
+//        myfile.open (spath);  // Se puede especificar una carpeta, si existe, crea el archivo dentro, si no, no hace nada.
+//        myfile << metadataObj.getJsonFile().dump();  // Esto crea un nuevo archivo y reescribe todo lo que hay en el
+//        myfile.close();
         return to_string(metadataObj.id);
     }else{
         return "406";

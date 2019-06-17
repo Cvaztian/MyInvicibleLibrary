@@ -121,7 +121,7 @@ using namespace std;
          * Realiza el proceso de codificacion completo
          * @param text string que se desea codificar
          */
-        void encode(string text){
+        void encode(string text, string dir){
             //Contabiliza la frecuencia de cada char y lo almacena en un map
             unordered_map<char, int> freq;
             for (char ch: text) {
@@ -173,7 +173,7 @@ using namespace std;
             this->decoding_map = huffmanCode;
 
             //Creates txt and writes the formatted text
-            ofstream outfile ("Huffman.txt");
+            ofstream outfile (dir);
             outfile <<txtFormatting(str, root)<< std::endl;
 
             //cout<<decode_aux(str, root)<<endl;
@@ -317,19 +317,26 @@ using namespace std;
         * a otra funcion auxiliar para decodificarlo
         * @return string mensaje decodificado
         */
-        string decode(){
+        string decode(string dir){
             ifstream huf_file;
-            huf_file.open("/home/cvaz/Documents/Algoritmos y Estructuras de Datos II/MyInvicibleLibrary/MyInvicibleLibrary/cmake-build-debug/Huffman.txt");
+            huf_file.open(dir);
             if(!huf_file){
                 cout<<"Error con la direccion del archivo"<<endl;
             }
             else{
-                string format;
+                string format, preor, inord;
                 getline(huf_file, format);
+                preor = format;
                 format.erase(0, 1);
                 format = format.substr(0, format.find("#"));
                 cout<<"El formato es: " + format<<endl;
-                return decode_aux(format, root);
+                //Obtiene el arbol en preorden
+                preor.erase(0, preor.find("#")+1);
+                inord = preor.substr(preor.find("#")+1, preor.length()-preor.rfind("#")-2);
+                preor = preor.substr(0, preor.find("#"));
+                //Crea el nodo raiz a partir del codigo
+                Node *raiz = buildTree(preor, inord);
+                return decode_aux(format, raiz);
             }
         }
 
@@ -374,7 +381,7 @@ using namespace std;
                 cout<<"Error, ingrese un codigo y arbol valido"<<endl;
             }
         }
-    }Compressor;
+    };
 
 
 
