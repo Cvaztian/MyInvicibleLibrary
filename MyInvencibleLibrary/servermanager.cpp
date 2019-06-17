@@ -1,0 +1,216 @@
+#include "servermanager.h"
+
+ServerManager::ServerManager(utility::string_t url):m_listener(url)
+{
+    // Conectando modulos
+    sockets = new ServerSocket();
+
+    // Conectando http a metodos
+    m_listener.support(methods::GET, std::bind(&ServerManager::handle_get, this, std::placeholders::_1));
+    m_listener.support(methods::PUT, std::bind(&ServerManager::handle_put, this, std::placeholders::_1));
+    m_listener.support(methods::POST, std::bind(&ServerManager::handle_post, this, std::placeholders::_1));
+    m_listener.support(methods::DEL, std::bind(&ServerManager::handle_delete, this, std::placeholders::_1));
+}
+
+void ServerManager::handle_error(pplx::task<void>& t)
+{
+    try
+    {
+        t.get();
+    }
+    catch(...)
+    {
+        // Ignore the error, Log it if a logger is available
+    }
+}
+
+
+//
+// Get Request
+//
+void ServerManager::handle_get(http_request message)
+{
+    ucout << "Operacion get\n";
+
+    // Parsing incoming message
+    string returning;
+
+    pplx::task<utility::string_t> body_json = message.extract_string();
+
+    string contenido = body_json.get();
+    nlohmann::json response = nlohmann::json::parse(contenido); // Convierto a json
+    Metadata responseObj = Metadata::jsonParse(response);  // Objeto metadata
+
+    // Consiguiendo metadata
+    responseObj.protocolo = 0; // Protocolo 0 es get
+    sockets->specialSend(responseObj.getJson().dump(), "base");  // Pido la metadata a la base de datos
+    response = nlohmann::json::parse(sockets->receiveS("base")); // La recibo
+    responseObj = Metadata::jsonParseFile(response);
+    if(responseObj.mensaje == "404"){ //Check for exceptions
+        cout << "Not found\n";
+        responseObj.mensaje = "La imagen no fue encontrada";
+        returning = responseObj.getJson().dump();
+        message.reply(status_codes::NotFound,returning);
+        return;
+    }
+    // Consiguiendo imagen
+    responseObj.protocolo = 0;
+    sockets->specialSend(responseObj.getJson().dump(), "raid");  // Pido imagen
+    response = nlohmann::json::parse(sockets->specialReceive("raid")); // La recibo, se cae aca por la imagen
+    responseObj = Metadata::jsonParse(response);
+    if(responseObj.mensaje == "404"){ // Check for exceptions
+        cout << "Error interno: Hay imagen en base de datos, pero no en disco.\n";
+        responseObj.mensaje = "Error, hay imagen en base de datos pero no en disco.\n";
+        returning = responseObj.getJson().dump();
+        message.reply(status_codes::InternalError, returning);
+        return;
+    }
+
+    // Devolviendo, a este punto response tiene todo lo necesario
+    ucout <<  "Operacion exitosa." << endl;
+    returning = response.dump();
+    message.reply(status_codes::OK,returning);
+    //std::cout<<rep;
+};
+
+//
+// A POST request
+//
+void ServerManager::handle_post(http_request message)
+{
+    ucout << "Operacion post\n";
+
+    // Parsing incoming message
+    pplx::task<utility::string_t> body_json = message.extract_string();
+    string returning;
+    string contenido = body_json.get();
+    nlohmann::json response = nlohmann::json::parse(contenido); // Convierto a json
+    Metadata responseObj = Metadata::jsonParse(response);  // Objeto metadata
+
+    // Sobreescribiendo metadata
+    responseObj.protocolo = 1; // Protocolo 1: Actualizar
+    sockets->specialSend(responseObj.getJson().dump(), "base");
+    response = nlohmann::json::parse(sockets->receiveS("base"));
+    responseObj = Metadata::jsonParseFile(response);
+    if(responseObj.mensaje == "404"){ //Check for exceptions
+        cout << "Not found\n";
+        responseObj.mensaje = "La imagen no fue encontrada";
+        returning = responseObj.getJson().dump();
+        message.reply(status_codes::NotFound,returning);
+        return;
+    }
+    responseObj.mensaje = "Succesful";
+    returning = responseObj.getJson().dump();
+    ucout <<  "Actualizacion exitosa." << endl;
+    message.reply(status_codes::OK,returning);
+    return ;
+};
+
+//
+// A DELETE request
+//
+void ServerManager::handle_delete(http_request message)
+{
+    ucout<<"Operacion delete\n";
+
+    // Parsing incoming message
+    pplx::task<utility::string_t> body_json = message.extract_string();
+    string returning;
+    string contenido = body_json.get();
+    nlohmann::json response = nlohmann::json::parse(contenido); // Convierto a json
+    Metadata responseObj = Metadata::jsonParse(response);  // Objeto metadata
+
+    // Elimina metadata
+    responseObj.protocolo = 2; // Protocolo 2: Eliminar
+    sockets->specialSend(responseObj.getJson().dump(), "base");
+    string ayy = sockets->receiveS("base");
+    response = nlohmann::json::parse(ayy);
+    cout << response["galeria"];
+    responseObj = Metadata::jsonParse(response);
+    if(responseObj.mensaje == "404"){ //Check for exceptions
+        cout << "Not found\n";
+        responseObj.mensaje = "La imagen no fue encontrada";
+        returning = responseObj.getJson().dump();
+        message.reply(status_codes::NotFound,returning);
+        return;
+    }
+    response["protocolo"] = 2;
+        // Elimina imagen
+        sockets->specialSend(response.dump(), "raid");
+        response = nlohmann::json::parse(sockets->receiveS("raid"));
+        responseObj = Metadata::jsonParse(response);
+        if(responseObj.mensaje == "404"){ // Check for exceptions
+        cout << "Error interno: Hay imagen en base de datos, pero no en disco.\n";
+        responseObj.mensaje = "Error, hay imagen en base de datos pero no en disco.\n";
+        returning = responseObj.getJson().dump();
+        message.reply(status_codes::InternalError, returning);
+        return;
+    }
+
+    responseObj.mensaje = "Succesful";
+    returning = responseObj.getJson().dump();
+    ucout <<  "Eliminacion exitosa." << endl;
+    message.reply(status_codes::OK,returning);
+    return;
+};
+
+
+//
+// A PUT request
+//
+void ServerManager::handle_put(http_request message)
+{
+    ucout << "Operacion put\n";
+     ucout << message.to_string();
+
+     // Parsing mensaje entrante
+    pplx::task<utility::string_t> body_json = message.extract_string();
+    std::string jsonstr=utility::conversions::to_utf8string(body_json.get());
+
+    nlohmann::json orasi = nlohmann::json::parse(jsonstr);
+
+    cout << orasi["id"] << endl;
+
+    string returning;
+    //string contenido = message.to_string();
+    nlohmann::json response = orasi; // Convierto a json
+    Metadata responseObj = Metadata::jsonParse(response);  // Objeto metadata
+
+    // Escribe metadata
+    responseObj.protocolo = 3; // Protocolo 3: Crear
+    string enviar = responseObj.getJson().dump();
+    nlohmann::json jsEnviar = responseObj.getJsonFile();
+    jsEnviar["protocolo"]=3;
+    sockets->specialSend(jsEnviar.dump(), "base");
+    response = nlohmann::json::parse(sockets->receiveS("base"));
+    responseObj = Metadata::jsonParse(response);
+    if(responseObj.mensaje == "406"){ //Check for exceptions
+        cout << "Already in database\n";
+        responseObj.mensaje = "La imagen ya existe";
+        returning = responseObj.getJson().dump();
+        message.reply(status_codes::NotAcceptable,returning);
+        return;
+    }
+
+        // Escribe imagen
+        response["protocolo"] = 3;
+    response["imagen"] = orasi["imagen"];
+    string ayj = response.dump();
+        sockets->specialSend(ayj, "raid");
+        response = nlohmann::json::parse(sockets->receiveS("raid"));
+        responseObj = Metadata::jsonParse(response);
+        if(responseObj.mensaje == "406"){ // Check for exceptions
+        cout << "Error interno: Hay imagen en disco, pero no en base de datos.\n";
+        responseObj.mensaje = "Error, hay imagen en disco pero no en base de datos.\n";
+        returning = responseObj.getJson().dump();
+        message.reply(status_codes::InternalError, returning);
+        return;
+
+    }
+    responseObj.mensaje = "Succesful";
+    returning = responseObj.getJson().dump();
+    ucout <<  "Creacion exitosa." << endl;
+    message.reply(status_codes::OK,returning);
+    return ;
+
+}
