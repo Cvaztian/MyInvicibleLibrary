@@ -5,6 +5,7 @@
 #ifndef HUFFMAN_HUFFMAN_H
 #define HUFFMAN_HUFFMAN_H
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <queue>
 #include <unordered_map>
@@ -151,7 +152,7 @@ using namespace std;
             }
 
             //El nodo raiz almacena una referencia al arbol
-            Node *root = pq.top();
+            root = pq.top();
 
             // Recorre el arbol y guarda los codigos calculados en un map, y los imprime
             unordered_map<char, string> huffmanCode;
@@ -170,25 +171,20 @@ using namespace std;
             this->encoded_string = str;
             this->decoded_string = text;
             this->decoding_map = huffmanCode;
-            string test = txtFormatting(text, root);
 
-            cout<<decode(str, root)<<endl;
+            //Creates txt and writes the formatted text
+            ofstream outfile ("Huffman.txt");
+            outfile <<txtFormatting(str, root)<< std::endl;
+
+            //cout<<decode_aux(str, root)<<endl;
         }
-
-
-/**
- * Funcion que realiza todo el proceso de decodificacion
- * @param text string que se desea decodificar
- * @param huffmanCode map de codigos y char respectivos
- * @param root nodo raiz mediante el cual se obtiene el arbol
- * @return string decodificado
- */
-
-
-        //Se van a escribir las listas en preorden y orden, strings
-        //Con el siguiente formato: $MENSAJE_CODIFICADO#ARBOL_PREORDEN#ARBOL_INORDEN$
-        //La escritura de los nodos raices tiene el siguiente formato: !_%frq
-        //La escritura de los nodos hojas tienen el siguiente formato: !char%frq
+        
+        /**
+        * Funcion que, a partir del arbol huffman, crea una lista de sus elementos
+        * en preorden en formato  !char%frq (_ si char es nulo, 0 si freq es nula)
+        * @param Nodo raiz con la referencia al arbol
+        * @return string en formato definido
+        */
         string preorderTree(Node* raiz){
             if(raiz != nullptr){
                 //String final armado recursivamente
@@ -220,6 +216,12 @@ using namespace std;
             }
         }
 
+        /**
+        * Funcion que, a partir del arbol huffman, crea una lista de sus elementos
+        * en orden en formato  !char%frq (_ si char es nulo, 0 si freq es nula)
+        * @param Nodo raiz con la referencia al arbol
+        * @return string en formato definido
+        */
         string inorderTree(Node* raiz){
             if(raiz != nullptr){
                 //String final armado recursivamente
@@ -248,6 +250,12 @@ using namespace std;
             }
         }
 
+        /**
+        * Funcion que arregla el codigo huffman, lista preorden y lista en orden
+        * @param string codigo huffman
+        * @param Nodo raiz con la referencia al arbol
+        * @return string en formato $CODIGO#ARBOL_PREORDEN#ARBOL_INORDEN$
+        */
         string txtFormatting(string text_code, Node* raiz) {
             if (text_code != "" && raiz != nullptr) {
                 string result = "$";
@@ -261,8 +269,15 @@ using namespace std;
             else{
                 cout<<"Error, no hay mensaje que codificar"<<endl;
             }
-      }
+        }
 
+        /**
+        * Funcion que reconstruye el arbol huffman a partir de las listas
+        * de sus elementos en preorden y orden
+        * @param string elementos en preorden
+        * @param string elementos en orden
+        * @return Node con la referencia al arbol reconstruido
+        */
         Node* buildTree(string preordr, string inordr){
             if(preordr != "" && inordr != ""){
                 //Takes first element of preorder as root
@@ -297,34 +312,66 @@ using namespace std;
             }
         }
 
-        string decode(string code, Node* tree){
-            cout<<"El mensaje es:"<<endl;
+        /**
+        * Funcion que abre el archivo con el formato huffman y llama
+        * a otra funcion auxiliar para decodificarlo
+        * @return string mensaje decodificado
+        */
+        string decode(){
+            ifstream huf_file;
+            huf_file.open("/home/cvaz/Documents/Algoritmos y Estructuras de Datos II/MyInvicibleLibrary/MyInvicibleLibrary/cmake-build-debug/Huffman.txt");
+            if(!huf_file){
+                cout<<"Error con la direccion del archivo"<<endl;
+            }
+            else{
+                string format;
+                getline(huf_file, format);
+                format.erase(0, 1);
+                format = format.substr(0, format.find("#"));
+                cout<<"El formato es: " + format<<endl;
+                return decode_aux(format, root);
+            }
+        }
+
+        /**
+        * Funcion auxiliar que decodifica el mensaje
+        * @param string codigo huffman
+        * @param Nodo raiz con la referencia al arbol
+        * @return string mensaje decodificado
+        */
+        string decode_aux(string code, Node* tree){
             if(code != "" && tree != nullptr){
                 string result = "";
-                Node* tmp_node = tree;
+                Node* tmp_node = tree;      //Nodo con el que se recorre el arbol
                 bool execute = true;
                 while(execute){
+                    //Si llega a un nodo hoja, anade la letra al resultado
                     if((tmp_node->left == nullptr) && (tmp_node->right == nullptr)){
                         result += tmp_node->ch;
                         tmp_node = tree;
+                        //Si anade el ultimo caracter y se acaba el codigo
                         if(code == ""){
                             execute = false;
                         }
                     }
+                    //Si es un nodo raiz
                     else{
+                        //Si el codigo indica 0, toma el camino izquierdo
                         if(code.substr(0,1) == "0"){
                             tmp_node = tmp_node->left;
                         }
+                        //Si el codigo indica 1, toma el camino derecho
                         else{
                             tmp_node = tmp_node->right;
                         }
-                        code.erase(0, 1);
+                        code.erase(0, 1);   //Elimina el elemento que acaba de evaluar
                     }
                 }
+                cout<<"El mensaje es: " + result<<endl;
                 return result;
             }
             else{
-                cout<<"Error, ingrese un coigo y arbol valido"<<endl;
+                cout<<"Error, ingrese un codigo y arbol valido"<<endl;
             }
         }
     }Compressor;
