@@ -75,7 +75,7 @@ void MainWindow::on_visualizar_boton_clicked()
 
     //tabla de prueba
 
-    ui->tableWidget->setColumnCount(3);
+    ui->tableWidget->setColumnCount(6);
     ui->tableWidget->setRowCount(5);
     QStringList m_TableHeader;
     m_TableHeader <<"#"<<"Name"<<"Text";
@@ -98,6 +98,7 @@ void MainWindow::on_visualizar_boton_clicked()
             {"year",""}
     };
     RestClient::Get(sendable.dump());
+
     cout << RestClient::respuesta;
 }
 
@@ -244,3 +245,30 @@ pair<int, char*> MainWindow::abrir_archivo(string ruta) {
            }
        }
    }
+
+   /*
+//aqui
+pair<int, char*> MainWindow::crear_archivo(string ruta) {
+    ifstream retornable;
+    retornable.open(ruta, ios::in | ios::binary);
+    if (retornable.is_open()) {
+        retornable.seekg(0,ios::end);
+        int size = retornable.tellg();
+        retornable.seekg(ios::beg);
+        string fullChunkName;
+
+// Create a buffer to hold each chunk
+        char *retorno = new char[size];
+
+// Keep reading until end of file
+        if (retornable.is_open()) {
+            retornable.read(retorno, size);
+            retornable.close();
+            pair<int, char *> salida;
+            salida.first = size;
+            salida.second = retorno;
+            return salida;
+        }
+    }
+}
+*/

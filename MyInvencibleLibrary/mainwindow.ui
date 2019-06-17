@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MyInvincibleLibrary</string>
+   <string>MyIDE</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="QTabWidget" name="tabWidget">
@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="insertar">
      <attribute name="title">
@@ -33,8 +33,8 @@
      <widget class="QPlainTextEdit" name="insertar_nombre">
       <property name="geometry">
        <rect>
-        <x>20</x>
-        <y>10</y>
+        <x>30</x>
+        <y>60</y>
         <width>231</width>
         <height>31</height>
        </rect>
@@ -43,50 +43,11 @@
        <string>Ingrese el nombre de la imagen</string>
       </property>
      </widget>
-     <widget class="QPlainTextEdit" name="insertar_autor">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>90</y>
-        <width>231</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="placeholderText">
-       <string>Ingrese el autor</string>
-      </property>
-     </widget>
-     <widget class="QPlainTextEdit" name="insertar_ano">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>130</y>
-        <width>231</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="placeholderText">
-       <string>Ingrese el año de creación</string>
-      </property>
-     </widget>
-     <widget class="QPlainTextEdit" name="insertar_descripcion">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>170</y>
-        <width>231</width>
-        <height>91</height>
-       </rect>
-      </property>
-      <property name="placeholderText">
-       <string>Ingrese una descripción</string>
-      </property>
-     </widget>
      <widget class="QLabel" name="insertar_imagen">
       <property name="geometry">
        <rect>
-        <x>290</x>
-        <y>10</y>
+        <x>680</x>
+        <y>110</y>
         <width>251</width>
         <height>191</height>
        </rect>
@@ -121,8 +82,8 @@
      <widget class="QPushButton" name="insertar_boton">
       <property name="geometry">
        <rect>
-        <x>470</x>
-        <y>240</y>
+        <x>750</x>
+        <y>350</y>
         <width>111</width>
         <height>41</height>
        </rect>
@@ -133,14 +94,14 @@
        </font>
       </property>
       <property name="text">
-       <string>Insertar</string>
+       <string>Ejecutar</string>
       </property>
      </widget>
      <widget class="QLabel" name="insertar_ruta">
       <property name="geometry">
        <rect>
-        <x>290</x>
-        <y>206</y>
+        <x>680</x>
+        <y>310</y>
         <width>251</width>
         <height>21</height>
        </rect>
@@ -160,17 +121,26 @@
        <bool>true</bool>
       </property>
      </widget>
-     <widget class="QPlainTextEdit" name="insertar_galeria">
+     <widget class="QTableWidget" name="tableWidget_2">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
       <property name="geometry">
        <rect>
-        <x>20</x>
-        <y>50</y>
-        <width>231</width>
-        <height>31</height>
+        <x>30</x>
+        <y>110</y>
+        <width>611</width>
+        <height>421</height>
        </rect>
       </property>
-      <property name="placeholderText">
-       <string>Ingrese la galería</string>
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
+      <property name="showGrid">
+       <bool>true</bool>
+      </property>
+      <property name="columnCount">
+       <number>0</number>
       </property>
      </widget>
     </widget>
@@ -182,7 +152,7 @@
       <property name="geometry">
        <rect>
         <x>840</x>
-        <y>350</y>
+        <y>500</y>
         <width>111</width>
         <height>41</height>
        </rect>
@@ -283,16 +253,25 @@
       </property>
      </widget>
      <widget class="QTableWidget" name="tableWidget">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
       <property name="geometry">
        <rect>
         <x>20</x>
         <y>90</y>
-        <width>651</width>
+        <width>621</width>
         <height>451</height>
        </rect>
       </property>
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
       <property name="showGrid">
        <bool>true</bool>
+      </property>
+      <property name="columnCount">
+       <number>0</number>
       </property>
      </widget>
     </widget>
