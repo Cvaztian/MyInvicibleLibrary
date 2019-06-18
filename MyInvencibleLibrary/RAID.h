@@ -107,7 +107,7 @@ public:
      * proceso. Si se pierde la paridad la recalcula.
      * @param chunkName nombre del archivo que se quiere generar (leer)
      */
-    static pair<int, char*> read(char *chunkName) {
+    static pair<int, char *> read(char *chunkName) {
         string fileName;
         char *fileOutput = "tmp";
         // Create our output file
@@ -138,14 +138,20 @@ public:
                 // If chunk opened successfully, read it and write it to
                 // output file.
                 if (counter == 4) {
-                    fileInput.open("../RAID/" + to_string(carpetas_por_encontrar[0]) + "/" + (string) chunkName +".paridad", ios::in | ios::binary);
-                    cout << "../RAID/" + to_string(carpetas_por_encontrar[0]) + "/" + (string) chunkName +".paridad" << endl;
+                    fileInput.open(
+                            "../RAID/" + to_string(carpetas_por_encontrar[0]) + "/" + (string) chunkName + ".paridad",
+                            ios::in | ios::binary);
+                    cout << "../RAID/" + to_string(carpetas_por_encontrar[0]) + "/" + (string) chunkName + ".paridad"
+                         << endl;
                     //-----------------------
                     if (fileInput.is_open()) {
                         //-----------------------
-                        cout << "Abri: "<< "../RAID/" + to_string(carpetas_por_encontrar[0]) + "/" + (string) chunkName +".paridad" << endl;
+                        cout << "Abri: "
+                             << "../RAID/" + to_string(carpetas_por_encontrar[0]) + "/" + (string) chunkName +
+                                ".paridad" << endl;
                         carpetas_por_encontrar.pop_back();
-                        archivos_por_encontrar.erase(std::find(archivos_por_encontrar.begin(), archivos_por_encontrar.end(), counter));
+                        archivos_por_encontrar.erase(
+                                std::find(archivos_por_encontrar.begin(), archivos_por_encontrar.end(), counter));
                         fileSize = getFileSize(&fileInput);
                         /*char *inputBuffer = new char[fileSize];
 
@@ -159,14 +165,19 @@ public:
                         outputfile.close();
                         fileInput.close();
                         if (archivos_por_encontrar.size() > 1) {
-                            cout << "Imposible unir archivos debido al fallo simultaneo de 2 discos. Problema desconocido" << endl;
+                            cout
+                                    << "Imposible unir archivos debido al fallo simultaneo de 2 discos. Problema desconocido"
+                                    << endl;
                             break;
-                        }else if(archivos_por_encontrar.size() == 1){
-                            cout << "No fue posible encontrar todos los trozos, el disco caido es el disco numero: "<< carpetas_por_encontrar[0] << " y el archivo perdido es: " << archivos_por_encontrar[0]  << endl;
-                            reconstruir_archivo(to_string(archivos_por_encontrar[0]), carpetas_por_encontrar[0], chunkName, fileSize,particiones);
+                        } else if (archivos_por_encontrar.size() == 1) {
+                            cout << "No fue posible encontrar todos los trozos, el disco caido es el disco numero: "
+                                 << carpetas_por_encontrar[0] << " y el archivo perdido es: "
+                                 << archivos_por_encontrar[0] << endl;
+                            reconstruir_archivo(to_string(archivos_por_encontrar[0]), carpetas_por_encontrar[0],
+                                                chunkName, fileSize, particiones);
                             read(chunkName);
                             break;
-                        }else{
+                        } else {
                             cout << "Quedan " << archivos_por_encontrar.size() << " archivos por encontrar" << endl;
                             cout << "Reconstruccion completa" << endl;
                             // Close output file.
@@ -174,13 +185,16 @@ public:
                             break;
                         }
                         //este es el else del filenput.isopen()
-                    }else{
+                    } else {
                         if (archivos_por_encontrar.size() > 1) {
-                            cout << "Imposible unir archivos debido al fallo simultaneo de 2 discos. Problema desconocido" << endl;
+                            cout
+                                    << "Imposible unir archivos debido al fallo simultaneo de 2 discos. Problema desconocido"
+                                    << endl;
                             break;
-                        }else{
-                            cout << "No fue posible encontrar todos los trozos, el disco caido es el disco numero: "<< carpetas_por_encontrar[0] << " y el archivo perdido es la paridad"  << endl;
-                            reconstruir_archivo("paridad", carpetas_por_encontrar[0], chunkName, fileSize,particiones);
+                        } else {
+                            cout << "No fue posible encontrar todos los trozos, el disco caido es el disco numero: "
+                                 << carpetas_por_encontrar[0] << " y el archivo perdido es la paridad" << endl;
+                            reconstruir_archivo("paridad", carpetas_por_encontrar[0], chunkName, fileSize, particiones);
                             cout << "Paridad recalculada" << endl;
                             read(chunkName);
                             break;
@@ -190,12 +204,15 @@ public:
                 } else {
                     fileInput.open("../RAID/" + to_string(contador) + "/" + (string) fileName.c_str(),
                                    ios::in | ios::binary);
-                    cout << "Estoy intentando abrir: " << "../RAID/" + to_string(contador) + "/" + (string) fileName.c_str()
+                    cout << "Estoy intentando abrir: "
+                         << "../RAID/" + to_string(contador) + "/" + (string) fileName.c_str()
                          << endl;
                     if (fileInput.is_open()) {
                         cout << "Abri: " << "../RAID/" + to_string(contador) + "/" + (string) fileName.c_str() << endl;
-                        carpetas_por_encontrar.erase(std::find(carpetas_por_encontrar.begin(), carpetas_por_encontrar.end(), contador));
-                        archivos_por_encontrar.erase(std::find(archivos_por_encontrar.begin(), archivos_por_encontrar.end(), counter));
+                        carpetas_por_encontrar.erase(
+                                std::find(carpetas_por_encontrar.begin(), carpetas_por_encontrar.end(), contador));
+                        archivos_por_encontrar.erase(
+                                std::find(archivos_por_encontrar.begin(), archivos_por_encontrar.end(), counter));
                         filefound = true;
                         fileSize = getFileSize(&fileInput);
                         char *inputBuffer = new char[fileSize];
@@ -225,31 +242,31 @@ public:
             cout << "File assembly complete!" << endl;
             ifstream retornable;
             retornable.open("../tmp", ios::in | ios::binary);
-            cout << "Estoy abriendo" << "../"+(string)chunkName << endl;
+            cout << "Estoy abriendo" << "../" + (string) chunkName << endl;
             if (retornable.is_open()) {
                 int size = getFileSize(&retornable);
                 string fullChunkName;
                 cout << "El tamano del archivo es: " << size << endl;
 
                 // Create a buffer to hold each chunk
-                char* retorno = new char[size];
+                char *retorno = new char[size];
 
                 // Keep reading until end of file
-                    if (retornable.is_open()) {
-                        retornable.read(retorno, size);
-                        retornable.close();
-                        int pp = 0;
-                        pair<int, char*> salida;
-                        salida.first = size;
+                if (retornable.is_open()) {
+                    retornable.read(retorno, size);
+                    retornable.close();
+                    int pp = 0;
+                    pair<int, char *> salida;
+                    salida.first = size;
 
-                        salida.second = retorno;
-                        return salida;
-                    }else{
-                        cout << "No encontre el archivo generado para su conversion a char*" << endl;
-                    }
+                    salida.second = retorno;
+                    return salida;
+                } else {
+                    cout << "No encontre el archivo generado para su conversion a char*" << endl;
+                }
             }
 
-        }else { cout << "Error: Unable to open file for output." << endl; }
+        } else { cout << "Error: Unable to open file for output." << endl; }
     }
 
     // Finds chunks by "chunkName" and creates file specified in fileOutput
@@ -386,7 +403,7 @@ public:
  * @param str
  * @param length
  */
- static void reverse(char str[], int length) {
+    static void reverse(char str[], int length) {
         int start = 0;
         int end = length - 1;
         while (start < end) {
@@ -449,11 +466,12 @@ public:
  * @return
  */
     static int getFileSize(ifstream *file) {
-        file->seekg(0,ios::end);
+        file->seekg(0, ios::end);
         int filesize = file->tellg();
         file->seekg(ios::beg);
         return filesize;
     }
+
 /**
  *
  * @param a
@@ -461,10 +479,11 @@ public:
  * @param c
  * @return
  */
-    static char XOR(char a, char b, char c){
-    char d = a ^ b ^ c;
-    return d;
+    static char XOR(char a, char b, char c) {
+        char d = a ^b ^c;
+        return d;
     }
+
 /**
  *
  * @param trozo
@@ -473,34 +492,52 @@ public:
  * @param chunk_size
  * @param particiones
  */
-    static void reconstruir_archivo(string trozo, int carpeta, char* chunkName, int chunk_size, vector<char*> particiones){
-        cout << "Se llamo a reconstruir_archivo para el trozo: "+(string)trozo+" en la carpeta (disco): "<< carpeta << "; particiones tiene un tamano de: " << particiones.size() << endl;
-        char* paridad = new char[chunk_size];
+    static void
+    reconstruir_archivo(string trozo, int carpeta, char *chunkName, int chunk_size, vector<char *> particiones) {
+        cout << "Se llamo a reconstruir_archivo para el trozo: " + (string) trozo + " en la carpeta (disco): "
+             << carpeta << "; particiones tiene un tamano de: " << particiones.size() << endl;
+        checkFolder("../RAID/"+to_string(carpeta));
+        char *paridad = new char[chunk_size];
         ofstream archivo;
-        for(int i = 0; i <= chunk_size; i++){
-            paridad[i] = XOR(particiones[0][i],particiones[1][i],particiones[2][i]);
+        for (int i = 0; i <= chunk_size; i++) {
+            paridad[i] = XOR(particiones[0][i], particiones[1][i], particiones[2][i]);
         }
-        archivo.open((string)"../RAID/"+to_string(carpeta)+"/"+(string)chunkName+"."+trozo,ios::out | ios::trunc | ios::binary);
-        cout << "Estoy guardando archivo reconstruido en: " << (string)"../RAID/"+to_string(carpeta)+"/"+(string)chunkName+"."+trozo << endl;
-        if(archivo.is_open()) {
+        archivo.open((string) "../RAID/" + to_string(carpeta) + "/" + (string) chunkName + "." + trozo,
+                     ios::out | ios::trunc | ios::binary);
+        cout << "Estoy guardando archivo reconstruido en: "
+             << (string) "../RAID/" + to_string(carpeta) + "/" + (string) chunkName + "." + trozo << endl;
+        if (archivo.is_open()) {
             archivo.write(paridad, chunk_size);
             cout << "Reconstruccion completada" << endl;
-        }else{
+        } else {
             cout << "No se logro abrir archivo para la reconstruccion" << endl;
         }
         archivo.close();
-        delete(paridad);
+        delete (paridad);
     }
 
-    static void crear_archivo(string nombre, char* buffer, int tam){
+    static void crear_archivo(string nombre, char *buffer, int tam) {
         ofstream prueba;
         prueba.open("../tmp", ios::out | ios::trunc | ios::binary);
-        prueba.write(buffer,tam);
-        char* a = (char*)nombre.c_str();
-        write("../tmp",a);
+        prueba.write(buffer, tam);
+        char *a = (char *) nombre.c_str();
+        write("../tmp", a);
         prueba.close();
     }
+
+    static bool checkFolder(string galeria) {
+        struct stat info;
+        const char *pathname = galeria.c_str();
+        if (stat(pathname, &info) != 0) {
+            printf("cannot access %s\n", pathname);  // No existe
+            return false;
+        } else if (info.st_mode & S_IFDIR) {  // S_ISDIR() doesn't exist on my windows
+            printf("%s is a directory\n", pathname);  // Existe
+            return true;
+        } else {
+            printf("%s is no directory\n", pathname);  // No es directorio
+            return false;
+        }
+    }
 };
-
-
 #endif //MYINVICIBLELIBRARY_RAID_H
