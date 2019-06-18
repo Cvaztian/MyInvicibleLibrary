@@ -319,7 +319,7 @@ public:
 
          // Interpretado
          for(int i =0;i<lineasV.size();i++){  // por cada linea
-             json linea = lineasV[i];
+             nlohmann::json linea = lineasV[i];
              LinkedList<string> lineaL = LinkedList<string>();  // Lista de la linea
              for(int j =0;j<columnas.getSize();j++){  // Por cada columna qu ese debe mostrar
                  try {
@@ -516,9 +516,12 @@ private:
                  {"nombre",findInMapa(mapa,"nombre")},
                  {"galeria",findInMapa(mapa,"galeria")},
                  {"autor",findInMapa(mapa,"autor")},
-                 {"size",std::atoi(findInMapa(mapa,"size").c_str())},
+                 {"size",1},
                  {"descripcion",findInMapa(mapa,"descripcion")},
-                 {"year",findInMapa(mapa,"year")}
+                 {"year",findInMapa(mapa,"year")},
+                 {"id",-1},
+                 {"mensaje",""},
+                 {"protocolo",-1}
          };
          return pair<string, string>(nuevo.dump(),"");
      }

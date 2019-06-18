@@ -49,19 +49,34 @@ void MainWindow::dropEvent(QDropEvent *event){
 void MainWindow::on_insertar_boton_clicked()
 {
     //verificacion de imagen cargada
-    string input = get_insertar_galeria().substr(0,5);
+    string input = get_insertar_nombre().substr(0,6);
     bool ver = (input == "INSERT" || input == "insert");
+    nlohmann::json js;
     if(ver && (!get_insertar_ruta().empty() && get_insertar_ruta() != "Ruta de la imagen")){
         //proceso
-    }else{
-        //tirar advertencia
-    }
-    pair<int, char*> auxiliar = abrir_archivo(get_insertar_ruta());
+        string jsS = Interprete::Interpretar(get_insertar_nombre()).first;
+        js = nlohmann::json::parse(jsS);
+        js["size"] = abrir_archivo(get_insertar_ruta()).first;
+        pair<int, char*> auxiliar = abrir_archivo(get_insertar_ruta());
     std::vector<char> imagen = std::vector<char>();
     int tam = auxiliar.first;
     for(int i =0; i<tam; i++){
         imagen.push_back(auxiliar.second[i]);
     }
+    js["imagen"] = imagen;
+    string jaja = js.dump();
+    RestClient::Put(js);
+    }else{
+        if(ver){
+            //tirar advertencia
+        }else{
+            if(input == "SELECT" || input == "select"){
+                pair<string,string> interpretted = Interprete::Interpretar(get_insertar_nombre());
+                LinkedList<LinkedList<string>> jsonLinked = Interprete::getCampos(interpretted.first, interpretted.second);
+            }
+        }
+    }
+
 }
 
 void MainWindow::on_visualizar_boton_clicked()
