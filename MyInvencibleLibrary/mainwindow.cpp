@@ -73,6 +73,24 @@ void MainWindow::on_insertar_boton_clicked()
             if(input == "SELECT" || input == "select"){
                 pair<string,string> interpretted = Interprete::Interpretar(get_insertar_nombre());
                 LinkedList<LinkedList<string>> jsonLinked = Interprete::getCampos(interpretted.first, interpretted.second);
+                int col = jsonLinked.front().getSize();
+                int fil = jsonLinked.getSize()-1;
+                ui->tableWidget->setColumnCount(col);
+                ui->tableWidget->setRowCount(fil);
+                QStringList m_TableHeader;
+                for(int i = 0; i < fil; i++) {
+                    QString str = QString::fromUtf8(jsonLinked.getElemento(0)->getData().getElemento(i)->getData().c_str());
+                    m_TableHeader.push_front(str);
+                }
+                ui->tableWidget->setHorizontalHeaderLabels(m_TableHeader);
+
+                for(int i = 1; i < jsonLinked.getSize(); i++){
+                    for(int j = 0; j < jsonLinked.getElemento(i)->getData().getSize(); j++){
+                        ui->tableWidget->setItem(i, j, new QTableWidgetItem(jsonLinked.getElemento(i)->getData().getElemento(j)->getData()));
+                    }
+                }
+
+
             }
         }
     }
@@ -84,14 +102,7 @@ void MainWindow::on_visualizar_boton_clicked()
 
     //tabla de prueba
 
-    ui->tableWidget->setColumnCount(6);
-    ui->tableWidget->setRowCount(5);
-    QStringList m_TableHeader;
-    m_TableHeader <<"#"<<"Name"<<"Text";
-    ui->tableWidget->setHorizontalHeaderLabels(m_TableHeader);
-    ui->tableWidget->setItem(0, 1, new QTableWidgetItem("Hello"));
-    ui->tableWidget->setItem(1, 2, new QTableWidgetItem("Hello"));
-    ui->tableWidget->setItem(2, 3, new QTableWidgetItem("Hello"));
+
 
     //tabla de prueba
 
