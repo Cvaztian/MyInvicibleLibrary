@@ -97,6 +97,9 @@ void MainWindow::on_insertar_boton_clicked()
                 //ui->tableWidget->setItem(0,0, new QTableWidgetItem("Ayy"));
 
 
+            }else{
+                string syntax = get_insertar_nombre();
+                Interprete::Interpretar(syntax);
             }
         }
     }
