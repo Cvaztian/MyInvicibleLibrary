@@ -20,6 +20,7 @@ DBManager::DBManager()
     }else{  // Si no hay registro de id anterior
         DBManager::id = 0;
     }
+    compressor = Huffman();
 }
 
 DBManager::~DBManager()
@@ -39,10 +40,10 @@ json DBManager::Select(string galeria, string nombre)
         ifstream infile;
         string spath = galeria + "/" + nombre+".json";
         const char* path = spath.c_str();
-        infile.open(path);
-        infile >> data;
-        response = json::parse(data);
-        infile.close();
+        //infile.open(path);
+        //infile >> data;
+        response = json::parse(compressor.decode(data));
+        //infile.close();
          return response;
     }else{  // Si no existe alguno
         json response = Metadata::getEmptyJson();
@@ -102,10 +103,13 @@ string DBManager::Update(json metadata)
         metadataObj.id = MetadataOld.id;  // El id no se puede sobreescribir
         string spath = metadataObj.galeria + "/" + metadataObj.nombre+".json";
         const char* path = spath.c_str();
+
+        compressor.encode(metadataObj.getJsonFile().dump(),spath);
+        /*
         ofstream myfile;
         myfile.open (path);  // Se puede especificar una carpeta, si existe, crea el archivo dentro, si no, no hace nada.
         myfile << metadataObj.getJsonFile();  // Esto crea un nuevo archivo y reescribe todo lo que hay en el
-        myfile.close();
+        myfile.close();*/
         return "Success";
     }else{
         return "404";
@@ -128,9 +132,11 @@ string DBManager::Insert(json metadata)
         metadataObj.id = nid;  // Asigna el id
         ofstream myfile;
         string spath = metadataObj.galeria + "/" + metadataObj.nombre+".json";
+        compressor.encode(metadataObj.getJsonFile().dump(),spath);
+        /*
         myfile.open (spath.c_str());  // Se puede especificar una carpeta, si existe, crea el archivo dentro, si no, no hace nada.
         myfile << metadataObj.getJsonFile();  // Esto crea un nuevo archivo y reescribe todo lo que hay en el
-        myfile.close();
+        myfile.close();*/
         return to_string(nid);
     }else if(checkGalery(metadataObj.galeria) && !checkFile(metadataObj.nombre, metadataObj.galeria)){
         // Crea file
@@ -139,9 +145,11 @@ string DBManager::Insert(json metadata)
         metadataObj.id = nid;  // Asigna el id
         ofstream myfile;
         string spath = metadataObj.galeria + "/" + metadataObj.nombre+".json";
+        compressor.encode(metadataObj.getJsonFile().dump(),spath);
+        /*
         myfile.open (spath);  // Se puede especificar una carpeta, si existe, crea el archivo dentro, si no, no hace nada.
         myfile << metadataObj.getJsonFile();  // Esto crea un nuevo archivo y reescribe todo lo que hay en el
-        myfile.close();
+        myfile.close();*/
         return to_string(metadataObj.id);
     }else{
         return "406";

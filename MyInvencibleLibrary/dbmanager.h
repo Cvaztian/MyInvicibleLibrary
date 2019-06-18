@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include "metadata.h"
 #include "dirent.h"
-
+#include "Huffman.h"
 
 using namespace nlohmann;
 using namespace std;
@@ -88,6 +88,7 @@ public:
 private:
     static int id; /** Contador estatico del id de los archivos*/
 
+    Huffman compressor;
 
     /** @brief Verifica si existe galeria.
      * Version auxiliar que verifica la existencia de una galeria
