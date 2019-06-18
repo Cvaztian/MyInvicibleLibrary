@@ -37,7 +37,7 @@ add_executable(socketclient socketclient.cpp clientsocket.cpp clientsocket.h cli
 add_executable(socketserver socketserver.cpp serversocket.cpp serversocket.h )
 add_executable(ServerLib libmain.cpp src/handler.cpp
     servermanager.cpp servermanager.h serversocket.h serversocket.cpp
-    metadata.cpp metadata.h Interprete.h LinkedList.h Node.h)
+    metadata.cpp metadata.h Interprete.h LinkedList.h Node.h restclient.h restclient.cpp)
 
 add_executable(MetadataDB fiomain.cpp
     dbmanager.cpp dbmanager.h
@@ -56,7 +56,7 @@ add_executable(RAID mainP.cpp RAID.h
 add_executable(Interfaz Interfaz.pro main.cpp mainwindow.cpp mainwindow.h mainwindow.ui restclient.cpp restclient.h
         metadata.h metadata.cpp Interprete.h LinkedList.h Node.h)
 add_executable(Interprete InterpreteMain.cpp dbmanager.cpp dbmanager.h metadata.cpp
-        metadata.h LinkedList.h Node.h)
+        metadata.h LinkedList.h Node.h restclient.cpp restclient.h)
 
 add_subdirectory(json)
 
@@ -78,7 +78,7 @@ else(DBMS)
     target_link_libraries(RAID nlohmann_json::nlohmann_json)
             target_link_libraries(MetadataDB nlohmann_json::nlohmann_json)
         target_link_libraries(Interfaz Qt5::Widgets Qt5::PrintSupport nlohmann_json::nlohmann_json ${Casablanca_LIBRARIES})
-        target_link_libraries(Interprete nlohmann_json::nlohmann_json)
+        target_link_libraries(Interprete nlohmann_json::nlohmann_json ${Casablanca_LIBRARIES})
 endif(DBMS)
 
 
