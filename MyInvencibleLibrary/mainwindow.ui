@@ -105,7 +105,7 @@
      <string>Ingrese la acción por ejecutar con la sintaxis de SQL</string>
     </property>
    </widget>
-   <widget class="QTableWidget" name="tableWidget_2">
+   <widget class="QTableWidget" name="tableWidget">
     <property name="enabled">
      <bool>true</bool>
     </property>

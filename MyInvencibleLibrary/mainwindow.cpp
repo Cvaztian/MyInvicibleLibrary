@@ -44,8 +44,6 @@ void MainWindow::dropEvent(QDropEvent *event){
         ui->insertar_imagen->show();
         ui->insertar_ruta->show();
     }
-
-
 }
 
 void MainWindow::on_insertar_boton_clicked()
@@ -53,7 +51,7 @@ void MainWindow::on_insertar_boton_clicked()
     //verificacion de imagen cargada
     string input = get_insertar_galeria().substr(0,5);
     bool ver = (input == "INSERT" || input == "insert");
-    if(ver && (!get_insertar_ruta().empty() && get_insertar_ruta() != "Ruta de la imagen"){
+    if(ver && (!get_insertar_ruta().empty() && get_insertar_ruta() != "Ruta de la imagen")){
         //proceso
     }else{
         //tirar advertencia
@@ -64,19 +62,6 @@ void MainWindow::on_insertar_boton_clicked()
     for(int i =0; i<tam; i++){
         imagen.push_back(auxiliar.second[i]);
     }
-    nlohmann::json sendable = {
-            {"imagen",imagen},
-            {"size",tam},
-            {"mensaje",""},
-            {"protocolo",-1},
-            {"nombre",get_insertar_nombre()},
-            {"autor",get_insertar_autor()},
-            {"descripcion",get_insertar_descripcion()},
-            {"galeria",get_insertar_galeria()},
-            {"id",-1},
-            {"year",get_insertar_ano()}
-    };
-    RestClient::Put(sendable);  // Esta linea devuelve el resultado de la operacion
 }
 
 void MainWindow::on_visualizar_boton_clicked()
@@ -94,18 +79,6 @@ void MainWindow::on_visualizar_boton_clicked()
     ui->tableWidget->setItem(2, 3, new QTableWidgetItem("Hello"));
 
     //tabla de prueba
-    nlohmann::json sendable = {
-            {"imagen",std::vector<char>()},
-            {"size",-1},
-            {"mensaje",""},
-            {"protocolo",-1},
-            {"nombre",get_visualizar_nombre()},
-            {"autor",""},
-            {"descripcion",""},
-            {"galeria",get_visualizar_galeria()},
-            {"id",-1},
-            {"year",""}
-    };
 
     string peticion = "select * from Pruebas WHERE id = 1";
 
@@ -121,126 +94,40 @@ void MainWindow::on_visualizar_boton_clicked()
     cout << asd["id"] << flush;*/
 }
 
-void MainWindow::on_modificar_boton_clicked()
-{
-
-}
-
-void MainWindow::on_modificar_cargar_clicked()
-{
-    nlohmann::json sendable = {
-            {"imagen",std::vector<char>()},
-            {"size",-1},
-            {"mensaje",""},
-            {"protocolo",-1},
-            {"nombre",get_modificar_nombre()},
-            {"autor",""},
-            {"descripcion",""},
-            {"galeria",get_modificar_galeria()},
-            {"id",-1},
-            {"year",""}
-    };
-    RestClient::Get(sendable.dump());
-    cout << RestClient::respuesta;
-}
-
-void MainWindow::on_eliminar_boton_clicked()
-{
-
-}
-
-void MainWindow::on_eliminar_cargar_clicked()
-{
-    nlohmann::json sendable = {
-            {"imagen",std::vector<char>()},
-            {"size",-1},
-            {"mensaje",""},
-            {"protocolo",-1},
-            {"nombre",get_eliminar_nombre()},
-            {"autor",""},
-            {"descripcion",""},
-            {"galeria",get_eliminar_galeria()},
-            {"id",-1},
-            {"year",""}
-    };
-    RestClient::Delete(sendable.dump());
-    cout << RestClient::respuesta;
-
-}
 
 
-string MainWindow::get_insertar_ano(){
-    string ano = ui->insertar_ano->toPlainText().toStdString();
-    return ano;
-}
 string MainWindow::get_insertar_ruta(){
     string ruta = ui->insertar_ruta->text().toStdString();
     return ruta;
 }
-string MainWindow::get_insertar_autor(){
-    string autor = ui->insertar_autor->toPlainText().toStdString();
-    return autor;
-}
+
 string MainWindow::get_insertar_nombre(){
     string nombre = ui->insertar_nombre->toPlainText().toStdString();
     return nombre;
 }
-string MainWindow::get_insertar_galeria(){
-    string galeria = ui->insertar_galeria->toPlainText().toStdString();
-    return galeria;
-}
-string MainWindow::get_insertar_descripcion(){
-    string descripcion = ui->insertar_descripcion->toPlainText().toStdString();
-    return descripcion;
-}
-string MainWindow::get_visualizar_nombre(){
-    string nombre = ui->visualizar_nombre->toPlainText().toStdString();
-    return nombre;
-}
-string MainWindow::get_visualizar_galeria(){
-    string galeria = ui->visualizar_galeria->toPlainText().toStdString();
-    return galeria;
-}
-int MainWindow::get_modificar_ano(){
-    int ano = ui->modificar_ano->toPlainText().toInt();
-    return ano;
-}
-string MainWindow::get_modificar_autor(){
-    string autor = ui->modificar_autor->toPlainText().toStdString();
-    return autor;
-}
-string MainWindow::get_modificar_nombre(){
-    string nombre = ui->modificar_nombre->toPlainText().toStdString();
-    return nombre;
-}
-string MainWindow::get_modificar_galeria(){
-    string galeria = ui->modificar_galeria->toPlainText().toStdString();
-    return galeria;
-}
-string MainWindow::get_modificar_descripcion(){
-    string descripcion = ui->modificar_descripcion->toPlainText().toStdString();
-    return descripcion;
-}
-string MainWindow::get_eliminar_nombre(){
-    string nombre = ui->eliminar_nombre->toPlainText().toStdString();
-    return nombre;
-}
-string MainWindow::get_eliminar_galeria(){
-    string galeria = ui->eliminar_galeria->toPlainText().toStdString();
-    return galeria;
-}
-void MainWindow::show_visualizar_ruta(string ruta){
-    QString ruta_aux = QString::fromUtf8(ruta.c_str());
-    ui->visualizar_ruta->setText(ruta_aux);
-}
-void MainWindow::show_modificar_ruta(string ruta){
-    QString ruta_aux = QString::fromUtf8(ruta.c_str());
-    ui->visualizar_ruta->setText(ruta_aux);
-}
-void MainWindow::show_eliminar_ruta(string ruta){
-    QString ruta_aux = QString::fromUtf8(ruta.c_str());
-    ui->visualizar_ruta->setText(ruta_aux);
-}
+
+void MainWindow::on_modificar_boton_clicked(){}
+void MainWindow::on_modificar_cargar_clicked(){}
+void MainWindow::on_eliminar_boton_clicked(){}
+void MainWindow::on_eliminar_cargar_clicked(){}
+string MainWindow::get_insertar_ano(){}
+string MainWindow::get_insertar_autor(){}
+string MainWindow::get_insertar_galeria(){}
+string MainWindow::get_insertar_descripcion(){}
+string MainWindow::get_visualizar_nombre(){}
+string MainWindow::get_visualizar_galeria(){}
+int MainWindow::get_modificar_ano(){}
+string MainWindow::get_modificar_autor(){}
+string MainWindow::get_modificar_nombre(){}
+string MainWindow::get_modificar_galeria(){}
+string MainWindow::get_modificar_descripcion(){}
+string MainWindow::get_eliminar_nombre(){}
+string MainWindow::get_eliminar_galeria(){}
+void MainWindow::show_visualizar_ruta(string ruta){}
+void MainWindow::show_modificar_ruta(string ruta){}
+void MainWindow::show_eliminar_ruta(string ruta){}
+
+
 pair<int, char*> MainWindow::abrir_archivo(string ruta) {
        ifstream retornable;
        retornable.open(ruta, ios::in | ios::binary);
