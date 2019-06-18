@@ -71,9 +71,11 @@ std::string ClientSocket::specialReceive() {
 
 void ClientSocket::specialSend(string mensaje) {
     sendS(to_string(mensaje.size()));
-    string ver = receiveS();
+    //string ver = receiveS();
+    sendS(mensaje);
+    /*
     while(ver == "false"){  // Si se recibe mal
         sendS(mensaje);  // Manda el mensaje de nuevo
         ver = receiveS();  // Espera sennal
-    }
+    }*/
 }

@@ -57,6 +57,10 @@ void ClientManager::mainloop()
             cout << "Protocolo 3: Crear\n"<<flush;
             crear(rsponse);
             break;
+        case 4:
+            cout<< "Protocolo 4: Get All\n" << flush;
+            GetAll(rsponse);
+            break;
         }
     }
 }
@@ -89,11 +93,11 @@ json ClientManager::Get(json metadata)
 
         //cout << "Imagen:" << metaObj.imagen <<endl;
         metaObj.size = tam;
-        /*
+
         ofstream prueba;
         prueba.open("../prueba", ios::out | ios::trunc | ios::binary);
         prueba.write(prb,tam);
-        prueba.close();*/
+        prueba.close();
 
         response = metaObj.getJson();
         sockets->specialSend(response.dump());
@@ -175,4 +179,10 @@ void ClientManager::crear(json metadata)
         sockets->sendS(metaObj.getJsonFile().dump());
     }
 
+}
+
+json ClientManager::GetAll(json metadata) {
+    json respuesta = baseDatos->SelectAll(metadata["galeria"]);  // Debe ser un json con array de jsons
+    sockets->sendS(respuesta.dump());
+    return respuesta;
 }
