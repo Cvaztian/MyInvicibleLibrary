@@ -71,8 +71,12 @@ void MainWindow::on_insertar_boton_clicked()
             //tirar advertencia
         }else{
             if(input == "SELECT" || input == "select"){
-                pair<string,string> interpretted = Interprete::Interpretar(get_insertar_nombre());
-                LinkedList<LinkedList<string>> jsonLinked = Interprete::getCampos(interpretted.first, interpretted.second);
+                string syntax;
+                pair<string,string> interpretted = Interprete::Interpretar(syntax);
+                string galeria = interpretted.first;
+                RestClient::Get(syntax);
+                string jsonlineas = RestClient::respuesta;
+                LinkedList<LinkedList<string>> jsonLinked = Interprete::getCampos(jsonlineas, interpretted.second);
                 int col = jsonLinked.front().getSize();
                 int fil = jsonLinked.getSize()-1;
                 ui->tableWidget->setColumnCount(col);
@@ -86,7 +90,8 @@ void MainWindow::on_insertar_boton_clicked()
 
                 for(int i = 1; i < jsonLinked.getSize(); i++){
                     for(int j = 0; j < jsonLinked.getElemento(i)->getData().getSize(); j++){
-                        ui->tableWidget->setItem(i, j, new QTableWidgetItem(jsonLinked.getElemento(i)->getData().getElemento(j)->getData()));
+                        QString str_aux = QString::fromUtf8(jsonLinked.getElemento(i)->getData().getElemento(j)->getData().c_str());
+                        ui->tableWidget->setItem(i, j, new QTableWidgetItem(str_aux));
                     }
                 }
 
