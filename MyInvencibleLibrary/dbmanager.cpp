@@ -39,11 +39,12 @@ json DBManager::Select(string galeria, string nombre)
         string data;
         ifstream infile;
         string spath = galeria + "/" + nombre+".json";
-        const char* path = spath.c_str();
-        infile.open(path);
-        infile >> data;
-        response = json::parse(data);
-        infile.close();
+        //const char* path = spath.c_str();
+        //infile.open(path);
+        //infile >> data;
+        response = json::parse(compressor.decode(spath));
+        string responseS = response.dump();
+        //infile.close();
          return response;
     }else{  // Si no existe alguno
         json response = Metadata::getEmptyJson();
@@ -51,6 +52,48 @@ json DBManager::Select(string galeria, string nombre)
         return response;
     }
 }
+
+
+json DBManager::SelectAll(string galeria) {
+
+    std::vector<json> responseV = std::vector<json>();
+    std::string path = galeria + "/";
+
+    std::string nombre;
+
+    DIR *dir;
+    struct dirent *ent;
+
+    if ((dir = opendir ("Pruebas/")) != NULL) {
+        /* print all the files and directories within directory */
+        while ((ent = readdir (dir)) != NULL) {  // Mientras que hayan directorios
+            printf ("%s\n", ent->d_name);
+            if(strncmp(ent->d_name,".",1)==0 || strncmp(ent->d_name,"..",2)==0){
+                // Dont show
+            }else{
+                nombre = "";
+                for(char &c : ent->d_name){
+                    if(c != 46){  // Si el caracter no es un punto
+                        nombre +=c;
+                    }else{
+                        break;
+                    }
+                }
+                responseV.push_back(Select(galeria, nombre));
+            }
+        }
+        closedir (dir);
+    } else {
+        /* could not open directory */
+        perror ("");
+        return EXIT_FAILURE;
+    }
+
+    // Ya aqui tengo el array con jsons
+    json responseJ = {{"array",responseV}};
+    return responseJ;
+}
+
 
 string DBManager::Update(json metadata)
 {
@@ -62,9 +105,12 @@ string DBManager::Update(json metadata)
         string spath = metadataObj.galeria + "/" + metadataObj.nombre+".json";
         const char* path = spath.c_str();
         ofstream myfile;
+        compressor.encode(metadataObj.getJsonFile().dump(),path);
+        /*
         myfile.open (path);  // Se puede especificar una carpeta, si existe, crea el archivo dentro, si no, no hace nada.
         myfile << metadataObj.getJsonFile();  // Esto crea un nuevo archivo y reescribe todo lo que hay en el
         myfile.close();
+         */
         return "Success";
     }else{
         return "404";
@@ -87,9 +133,11 @@ string DBManager::Insert(json metadata)
         metadataObj.id = nid;  // Asigna el id
         ofstream myfile;
         string spath = metadataObj.galeria + "/" + metadataObj.nombre+".json";
+        compressor.encode(metadataObj.getJsonFile().dump(),spath);
+        /*
         myfile.open (spath.c_str());  // Se puede especificar una carpeta, si existe, crea el archivo dentro, si no, no hace nada.
         myfile << metadataObj.getJsonFile();  // Esto crea un nuevo archivo y reescribe todo lo que hay en el
-        myfile.close();
+        myfile.close();*/
         return to_string(nid);
     }else if(checkGalery(metadataObj.galeria) && !checkFile(metadataObj.nombre, metadataObj.galeria)){
         // Crea file

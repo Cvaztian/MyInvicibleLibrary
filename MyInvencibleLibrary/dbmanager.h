@@ -10,6 +10,7 @@
 #include <sys/types.h>
 #include <stdio.h>
 #include "metadata.h"
+#include "dirent.h"
 
 
 using namespace nlohmann;
@@ -41,7 +42,14 @@ public:
      * @returns json Con la metadata asociada al nombre y la galeria
      * @exceptions 404 de no existir galeria o imagen.
 */
-    json Select(string galeria, string nombre);
+    nlohmann::json Select(string galeria, string nombre);
+
+    /** @brief Devuelve las metadatas de toda una galeria
+     * Metodo necesario para la correcta implentacion del SELECT SQL.
+     * @param galeria
+     * @return Un json con un array de jsons en su forma de string.
+     * */
+     nlohmann::json SelectAll(string galeria);
 
     /** @brief Actualiza la metadata especificada
      * Metodo analogo a update de SQL, dada una metadata, extrae el nombre
@@ -51,7 +59,7 @@ public:
      * @returns mensaje de exito
      * @exceptions 404 de no existir galeria o imagen.
 */
-    string Update(json metadata);
+    string Update(nlohmann::json metadata);
 
     /** @brief Crea una nueva metadata
      * Metodo analogo a insert de SQL, dada una metadata, crea el archivo
@@ -66,7 +74,7 @@ public:
      * @returns mensaje de exito
      * @exceptions 406 de existir tanto galeria como imagen.
 */
-    string Insert(json metadata);
+    string Insert(nlohmann::json metadata);
 
     /** @brief Borra una metadata dada
      * Metodo analogo a delete de SQL, dada una metadata, borra el archivo

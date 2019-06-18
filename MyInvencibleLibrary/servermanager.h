@@ -7,6 +7,7 @@
 #include "include/handler.h"
 #include "metadata.h"
 #include "nlohmann/json.hpp"
+#include "Interprete.h"
 
 using namespace std;
 using namespace web;
@@ -99,6 +100,8 @@ private:
      * Maneja errores ocasionados por el html en algun momento de la ejecucion.
 */
     void handle_error(pplx::task<void>& t);
+
+    bool is_number(const std::string& s);
 
     http_listener m_listener; /** El listener de las solicitudes http*/
 };

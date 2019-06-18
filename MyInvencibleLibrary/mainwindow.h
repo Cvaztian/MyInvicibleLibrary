@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "nlohmann/json.hpp"
 #include "restclient.h"
+#include "LinkedList.h"
 using namespace std;
 namespace Ui {
 class MainWindow;
