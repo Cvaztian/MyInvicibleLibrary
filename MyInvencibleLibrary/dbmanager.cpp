@@ -42,7 +42,7 @@ json DBManager::Select(string galeria, string nombre)
         const char* path = spath.c_str();
         //infile.open(path);
         //infile >> data;
-        response = json::parse(compressor.decode(data));
+        response = json::parse(compressor.decode(spath));
         //infile.close();
          return response;
     }else{  // Si no existe alguno

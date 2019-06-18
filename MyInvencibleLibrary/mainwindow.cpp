@@ -71,18 +71,18 @@ void MainWindow::on_insertar_boton_clicked()
             //tirar advertencia
         }else{
             if(input == "SELECT" || input == "select"){
-                string syntax;
+                string syntax = get_insertar_nombre();
                 pair<string,string> interpretted = Interprete::Interpretar(syntax);
                 string galeria = interpretted.first;
                 RestClient::Get(syntax);
                 string jsonlineas = RestClient::respuesta;
-                LinkedList<LinkedList<string>> jsonLinked = Interprete::getCampos(jsonlineas, interpretted.second);
+                LinkedList<LinkedList<string>> jsonLinked = Interprete::getCampos(jsonlineas, syntax);
                 int col = jsonLinked.front().getSize();
                 int fil = jsonLinked.getSize()-1;
                 ui->tableWidget->setColumnCount(col);
                 ui->tableWidget->setRowCount(fil);
                 QStringList m_TableHeader;
-                for(int i = 0; i < fil; i++) {
+                for(int i = 0; i < col; i++) {
                     QString str = QString::fromUtf8(jsonLinked.getElemento(0)->getData().getElemento(i)->getData().c_str());
                     m_TableHeader.push_front(str);
                 }
@@ -90,10 +90,11 @@ void MainWindow::on_insertar_boton_clicked()
 
                 for(int i = 1; i < jsonLinked.getSize(); i++){
                     for(int j = 0; j < jsonLinked.getElemento(i)->getData().getSize(); j++){
-                        QString str_aux = QString::fromUtf8(jsonLinked.getElemento(i)->getData().getElemento(j)->getData().c_str());
-                        ui->tableWidget->setItem(i, j, new QTableWidgetItem(str_aux));
+                        QString str_aux = QString::fromStdString(jsonLinked.getElemento(i)->getData().getElemento(j)->getData());
+                        ui->tableWidget->setItem(i-1, j, new QTableWidgetItem(str_aux));
                     }
                 }
+                //ui->tableWidget->setItem(0,0, new QTableWidgetItem("Ayy"));
 
 
             }

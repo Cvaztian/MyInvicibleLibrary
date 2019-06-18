@@ -280,8 +280,9 @@ public:
      * @param syntax Sintaxis SQL
      * @returns Lista de listas de strings conteniendo los valores solicitados.
      * */
-     static LinkedList<LinkedList<string>> getCampos(nlohmann::json lineas, string syntax){
-         std::vector<nlohmann::json> lineasV = lineas["array"];
+     static LinkedList<LinkedList<string>> getCampos(string lineas, string syntax){
+         nlohmann::json JsOn = nlohmann::json::parse(lineas);
+         std::vector<nlohmann::json> lineasV = JsOn["array"];
          LinkedList<string> columnas = LinkedList<string>();
          LinkedList<LinkedList<string>> respuesta = LinkedList<LinkedList<string>>();
          string campo;
@@ -295,6 +296,7 @@ public:
                      columnas.push_back("descripcion");
                      columnas.push_back("year");
                      columnas.push_back("autor");
+                     //columnas.push_back("id");
                      break;
                  }
                  for(i;i<syntax.size();i++){
@@ -321,7 +323,7 @@ public:
          for(int i =0;i<lineasV.size();i++){  // por cada linea
              nlohmann::json linea = lineasV[i];
              LinkedList<string> lineaL = LinkedList<string>();  // Lista de la linea
-             for(int j =0;j<columnas.getSize();j++){  // Por cada columna qu ese debe mostrar
+             for(int j =0;j<columnas.getSize();j++){  // Por cada columna que ese debe mostrar
                  try {
                      lineaL.push_back(linea[columnas.getElemento(
                              j)->getData()]); // agrego a la lista de la linea el valor de columna que tiene la linea
