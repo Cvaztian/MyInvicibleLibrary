@@ -319,7 +319,7 @@ public:
 
          // Interpretado
          for(int i =0;i<lineasV.size();i++){  // por cada linea
-             json linea = lineasV[i];
+             nlohmann::json linea = lineasV[i];
              LinkedList<string> lineaL = LinkedList<string>();  // Lista de la linea
              for(int j =0;j<columnas.getSize();j++){  // Por cada columna qu ese debe mostrar
                  try {
