@@ -1,9 +1,9 @@
 
 MyInvencibleLibrary/build-MyInvencibleLibrary-Desktop_Qt_5_12_1_GCC_64bit-Default/
 
-./.idea
+.idea/
 
-./cmake-build-debug
+cmake-build-debug/
 
 MyInvencibleLibrary/Build/bin/
 
